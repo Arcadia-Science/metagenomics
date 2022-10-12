@@ -1,3 +1,7 @@
+# arcadia-metagenomic-assembly-nf
+
+A Nextflow workflow for QC, assembly, and evaluation of metagenomic reads @ Arcadia Science.
+
 [![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.XXXXXXX-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.XXXXXXX)
 
 [![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A521.10.3-23aa62.svg)](https://www.nextflow.io/)
