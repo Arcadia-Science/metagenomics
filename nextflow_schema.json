@@ -45,13 +45,6 @@
                 }
             }
         },
-        "reference_genome_options": {
-            "title": "Reference genome options",
-            "type": "object",
-            "fa_icon": "fas fa-dna",
-            "description": "Reference genome related files and options required for the workflow.",
-            "properties": {}
-        },
         "institutional_config_options": {
             "title": "Institutional config options",
             "type": "object",
@@ -251,9 +244,6 @@
             "$ref": "#/definitions/input_output_options"
         },
         {
-            "$ref": "#/definitions/reference_genome_options"
-        },
-        {
             "$ref": "#/definitions/institutional_config_options"
         },
         {
@@ -262,5 +252,35 @@
         {
             "$ref": "#/definitions/generic_options"
         }
-    ]
+    ],
+    "properties": {
+        "single_end": {
+            "type": "string",
+            "default": "false"
+        },
+        "fastp_save_trimmed_fail": {
+            "type": "string",
+            "default": "false"
+        },
+        "fastp_qualified_quality": {
+            "type": "integer",
+            "default": 15
+        },
+        "fastp_cut_mean_quality": {
+            "type": "integer",
+            "default": 15
+        },
+        "adapterremoval_minquality": {
+            "type": "integer",
+            "default": 2
+        },
+        "keep_phix": {
+            "type": "string",
+            "default": "false"
+        },
+        "adapterremoval_trim_quality_stretch": {
+            "type": "string",
+            "default": "false"
+        }
+    }
 }

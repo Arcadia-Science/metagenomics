@@ -1,5 +1,5 @@
 name: Feature request
-description: Suggest an idea for the Arcadia-Science/arcadia-metagenomic-assembly-nf pipeline
+description: Suggest an idea for the Arcadia-Science/metagenomics-assembly-nf pipeline
 labels: enhancement
 body:
   - type: textarea

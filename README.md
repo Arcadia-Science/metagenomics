@@ -1,6 +1,6 @@
-# arcadia-metagenomic-assembly-nf
+# metagenomics-assembly-nf
 
-A Nextflow workflow for QC, assembly, and evaluation of metagenomic reads @ Arcadia Science.
+A Nextflow workflow for QC, profiling, assembly, and evaluation of metagenomic reads @ Arcadia Science.
 
 [![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.XXXXXXX-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.XXXXXXX)
 
@@ -12,7 +12,7 @@ A Nextflow workflow for QC, assembly, and evaluation of metagenomic reads @ Arca
 
 ## Introduction
 
-**arcadia-metagenomic-assembly-nf** is an analysis workflow for QC, assembly, and evaluation of metagenomic reads using both short- and long-read technologies.
+**metagenomics-assembly-nf** is an analysis workflow for QC, assembly, and evaluation of metagenomic reads using both short- and long-read technologies.
 
 The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It uses Docker/Singularity containers making installation trivial and results highly reproducible. The [Nextflow DSL2](https://www.nextflow.io/docs/latest/dsl2.html) implementation of this pipeline uses one container per process which makes it much easier to maintain and update software dependencies. Where possible, these processes have been submitted to and installed from [nf-core/modules](https://github.com/nf-core/modules) in order to make them available to all nf-core pipelines, and to everyone within the Nextflow community!
 
@@ -29,7 +29,7 @@ On release, automated continuous integration tests run the pipeline on a full-si
 3. Download the pipeline and test it on a minimal dataset with a single command:
 
    ```bash
-   nextflow run Arcadia-Science/arcadia-metagenomic-assembly-nf -profile test,YOURPROFILE --outdir <OUTDIR>
+   nextflow run Arcadia-Science/metagenomics-assembly-nf -profile test,YOURPROFILE --outdir <OUTDIR>
    ```
 
    Note that some form of configuration will be needed so that Nextflow knows how to fetch the required software. This is usually done in the form of a config profile (`YOURPROFILE` in the example command above). You can chain multiple config profiles in a comma-separated string.
@@ -44,7 +44,7 @@ On release, automated continuous integration tests run the pipeline on a full-si
    <!-- TODO nf-core: Update the example "typical command" below used to run the pipeline -->
 
    ```bash
-   nextflow run Arcadia-Science/arcadia-metagenomic-assembly-nf --input samplesheet.csv --outdir <OUTDIR> -profile <docker/singularity/podman/shifter/charliecloud/conda/institute>
+   nextflow run Arcadia-Science/metagenomics-assembly-nf --input *_{1,2}.fastq.gz --outdir <OUTDIR> -profile <docker/singularity/podman/shifter/charliecloud/conda/institute>
    ```
 
 ## Contributions and Support
@@ -52,11 +52,6 @@ On release, automated continuous integration tests run the pipeline on a full-si
 If you would like to contribute to this pipeline, please see the [contributing guidelines](.github/CONTRIBUTING.md).
 
 ## Citations
-
-<!-- TODO nf-core: Add citation for pipeline after first release. Uncomment lines below and update Zenodo doi and badge at the top of this file. -->
-<!-- If you use  arcadia/metagenomics for your analysis, please cite it using the following doi: [10.5281/zenodo.XXXXXX](https://doi.org/10.5281/zenodo.XXXXXX) -->
-
-<!-- TODO nf-core: Add bibliography of tools and data used in your pipeline -->
 
 An extensive list of references for the tools used by the pipeline can be found in the [`CITATIONS.md`](CITATIONS.md) file.
 
