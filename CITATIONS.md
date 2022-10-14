@@ -1,4 +1,4 @@
-# arcadia/metagenomics: Citations
+# arcadia-metagenomic-assembly-nf Citations
 
 ## [nf-core](https://pubmed.ncbi.nlm.nih.gov/32055031/)
 
@@ -11,9 +11,18 @@
 ## Pipeline tools
 
 - [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
-
 - [MultiQC](https://pubmed.ncbi.nlm.nih.gov/27312411/)
   > Ewels P, Magnusson M, Lundin S, Käller M. MultiQC: summarize analysis results for multiple tools and samples in a single report. Bioinformatics. 2016 Oct 1;32(19):3047-8. doi: 10.1093/bioinformatics/btw354. Epub 2016 Jun 16. PubMed PMID: 27312411; PubMed Central PMCID: PMC5039924.
+- [Fastp](https://doi.org/10.1093/bioinformatics/bty560)
+  > Shifu Chen, Yanqing Zhou, Yaru Chen, Jia Gu; fastp: an ultra-fast all-in-one FASTQ preprocessor, Bioinformatics, Volume 34, Issue 17, 1 September 2018, Pages i884–i890
+- [SPAdes](https://currentprotocols.onlinelibrary.wiley.com/doi/abs/10.1002/cpbi.102)
+  > Andrey Prjibelski,Dmitry Antipov,Dmitry Meleshko,Alla Lapidus,Anton Korobeynikov. Using SPAdes De Novo Assembler. Current Protocols in Bioinformatics. 2020.
+- [Bowtie2](https://www.nature.com/articles/nmeth.1923)
+  > Ben Langmead and Steven L Salzberg. Fast-gapped read alignment with bowtie2. Nature Methods. 2012.
+- [metabat2 JGI Summarize Contigs](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6662567/)
+  > Dongwan D. Kang,1 Feng Li,2 Edward Kirton,1 Ashleigh Thomas,1 Rob Egan,1 Hong An,2 and Zhong Wang. MetaBAT 2: an adaptive binning algorithm for robust and efficient genome reconstruction from metagenome assemblies. PeerJ. 2019.
+- [Samtools](https://academic.oup.com/gigascience/article/10/2/giab008/6137722?login=false)
+  > Petr Danecek, James K Bonfield, Jennifer Liddle, John Marshall, Valeriu Ohan, Martin O Pollard, Andrew Whitwham, Thomas Keane, Shane A McCarthy, Robert M Davies, Heng Li. Twelve years of SAMtools and BCFtools. GigaScience. 2021.
 
 ## Software packaging/containerisation tools
 
