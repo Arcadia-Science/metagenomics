@@ -17,7 +17,7 @@
                         "size": "Large",
                         "weight": "Bolder",
                         "color": "<% if (success) { %>Good<% } else { %>Attention<%} %>",
-                        "text": "arcadia/metagenomics v${version} - ${runName}",
+                        "text": "Arcadia-Science/metagenomics v${version} - ${runName}",
                         "wrap": true
                     },
                     {

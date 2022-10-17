@@ -1,5 +1,5 @@
 //
-// This file holds several functions specific to the main.nf workflow in the arcadia/metagenomics pipeline
+// This file holds several functions specific to the main.nf workflow in the Arcadia-Science/metagenomics pipeline
 //
 
 class WorkflowMain {

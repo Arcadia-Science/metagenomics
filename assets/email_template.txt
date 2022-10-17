@@ -1,10 +1,10 @@
 Run Name: $runName
 
 <% if (success){
-    out << "## arcadia/metagenomics execution completed successfully! ##"
+    out << "## Arcadia-Science/metagenomics execution completed successfully! ##"
 } else {
     out << """####################################################
-## arcadia/metagenomics execution completed unsuccessfully! ##
+## Arcadia-Science/metagenomics execution completed unsuccessfully! ##
 ####################################################
 The exit status of the task that caused the workflow execution to fail was: $exitStatus.
 The full error message was:
@@ -27,5 +27,5 @@ Pipeline Configuration:
 <% out << summary.collect{ k,v -> " - $k: $v" }.join("\n") %>
 
 --
-arcadia/metagenomics
-https://github.com/arcadia/metagenomics
+Arcadia-Science/metagenomics
+https://github.com/Arcadia-Science/metagenomics

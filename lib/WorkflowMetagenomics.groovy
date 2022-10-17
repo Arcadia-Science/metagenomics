@@ -1,5 +1,5 @@
 //
-// This file holds several functions specific to the workflow/metagenomics.nf in the arcadia/metagenomics pipeline
+// This file holds several functions specific to the workflow/metagenomics.nf in the Arcadia-Science/metagenomics pipeline
 //
 
 import groovy.text.SimpleTemplateEngine

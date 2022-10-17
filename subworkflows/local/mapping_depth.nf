@@ -1,4 +1,3 @@
-
 /*
  * Bowtie2 build and align steps for mapping
  */
@@ -16,7 +15,7 @@ workflow MAPPING_DEPTH {
     ch_versions = Channel.empty()
 
     // build index
-    BOWTIE2_ASSEMBLY_BUILD ( assemblies )
+    BOWTIE2_ASSEMBLY_BUILD (assemblies)
     ch_versions = ch_versions.mix(BOWTIE2_ASSEMBLY_BUILD.out.versions)
 
     // prepare for mapping
@@ -27,7 +26,7 @@ workflow MAPPING_DEPTH {
         .map{ id, assembly_meta, assembly, index, reads_meta, reads -> [ assembly_meta, assembly, index, reads_meta, reads ] }
 
     // align
-    BOWTIE2_ASSEMBLY_ALIGN (ch_bowtie2_input )
+    BOWTIE2_ASSEMBLY_ALIGN (ch_bowtie2_input)
     ch_grouped_mappings = BOWTIE2_ASSEMBLY_ALIGN.out.mappings
         .groupTuple(by: 0)
         .map{ meta, assembly, bams, bais -> [ meta, assembly.sort()[0], bams, bais ]}
@@ -51,9 +50,6 @@ workflow MAPPING_DEPTH {
 
     // emit results
     emit:
-    grouped_mappings                = ch_grouped_mappings
-    metabat_depths                  = ch_metabat_depths
-
-
-
+    grouped_mappings = ch_grouped_mappings
+    metabat_depths = ch_metabat_depths
 }

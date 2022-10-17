@@ -1,16 +1,16 @@
 #!/usr/bin/env nextflow
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Arcadia-Science/arcadia-metagenomic-assembly-nf
+    Arcadia-Science/metagenomics
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Github : https://github.com/Arcadia-Science/arcadia-metagenomic-assembly-nf
+    Github : https://github.com/Arcadia-Science/metagenomics
 ----------------------------------------------------------------------------------------
 
 */
 
 nextflow.enable.dsl = 2
 
-include { METAGENOMICS_SR } from './workflows/metagenomics-sr'
+include {METAGENOMICS_SR} from './workflows/metagenomics-sr'
 
 workflow METAGENOMICS {
     METAGENOMICS_SR ()
