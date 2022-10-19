@@ -8,7 +8,9 @@
 // NF-CORE MODULES installed with nf-core tools
 //
 include { FASTP                                  } from '../modules/nf-core/fastp/main'
-include { SPADES                                 } from '../modules/nf-core/spades/main'
+
+// LOCAL MODULES
+include { METASPADES                             } from '../modules/local/metaspades.nf'
 
 //
 // SUBWORKFLOWS
@@ -52,19 +54,19 @@ workflow METAGENOMICS_SR {
     ================================================================================
     */
     ch_assemblies = Channel.empty()
-    ch_short_reads_spades = ch_short_reads
-    SPADES (
+    ch_short_reads_metaspades = ch_short_reads
+    METASPADES (
             ch_short_reads_spades.map { meta, fastq -> [ meta, fastq, [], [] ] },
             []
         )
-        ch_spades_assemblies = SPADES.out.scaffolds
+        ch_metaspades_assemblies = METASPADES.out.scaffolds
             .map { meta, assembly ->
                 def meta_new = meta.clone()
-                meta_new.assembler  = "SPAdes"
+                meta_new.assembler  = "metaSPAdes"
                 [ meta_new, assembly ]
             }
-        ch_assemblies = ch_assemblies.mix(ch_spades_assemblies)
-        ch_versions = ch_versions.mix(SPADES.out.versions)
+        ch_assemblies = ch_assemblies.mix(ch_metaspades_assemblies)
+        ch_versions = ch_versions.mix(METASPADES.out.versions)
 
     /*
     ================================================================================
