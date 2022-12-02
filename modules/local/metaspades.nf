@@ -3,27 +3,26 @@
 process METASPADES {
     tag "$meta.id"
 
-    conda (params.enable_conda ? 'bioconda::spades=3.15.4' : null)
+    conda (params.enable_conda ? "bioconda::spades=3.15.3" : null)
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/spades:3.15.4--h95f258a_0' :
-        'quay.io/biocontainers/spades:3.15.4--h95f258a_0' }"
+        'https://depot.galaxyproject.org/singularity/spades:3.15.3--h95f258a_0' :
+        'quay.io/biocontainers/spades:3.15.3--h95f258a_0' }"
 
     input:
     tuple val(meta), path(reads)
 
     output:
-
-    tuple val(meta), path("metaSPAdes-${meta.id}_scaffolds.fasta.gz"), emit: assembly
-    path "metaSPAdes-${meta.id}_contigs.fasta.gz", emit: contigs
-    path "metaSPAdes-${meta.id}_graph.gfa.gz", emit: graph
-    path "metaSPAdes-${meta.id}.log", emit: log
-    path "versions.yml", emit: versions
+    tuple val(meta), path("metaspades-${meta.id}_scaffolds.fasta"), emit: assembly
+    path "metaspades-${meta.id}.log"                              , emit: log
+    path "metaspades-${meta.id}_contigs.fasta.gz"                 , emit: contigs_gz
+    path "metaspades-${meta.id}_scaffolds.fasta.gz"               , emit: assembly_gz
+    path "metaspades-${meta.id}_graph.gfa.gz"                     , emit: graph
+    path "versions.yml"                                , emit: versions
 
     script:
     def args = task.ext.args ?: ''
-    maxmem = task.memory.toGiga() //dynamically change memory requirements
-    if (params.spades_fix_cpus == -1 || task.cpus == params.spades_fix_cpus) //control cpus or dynamically change
-
+    maxmem = task.memory.toGiga()
+    if ( params.metaspades_fix_cpus == -1 || task.cpus == params.metaspades_fix_cpus )
         """
         metaspades.py \
             $args \
@@ -31,22 +30,20 @@ process METASPADES {
             --memory $maxmem \
             --pe1-1 ${reads[0]} \
             --pe1-2 ${reads[1]} \
-            -o spades
-        mv spades/assembly_graph_with_scaffolds.gfa metaSPAdes-${meta.id}_graph.gfa
-        mv spades/scaffolds.fasta metaSPAdes-${meta.id}_scaffolds.fasta
-        mv spades/contigs.fasta metaSPAdes-${meta.id}_contigs.fasta
-        mv spades/spades.log metaSPAdes-${meta.id}.log
-        gzip "metaSPAdes-${meta.id}_contigs.fasta"
-        gzip "metaSPAdes-${meta.id}_scaffolds.fasta"
-
+            -o metaspades
+        mv metaspades/assembly_graph_with_scaffolds.gfa metaspades-${meta.id}_graph.gfa
+        mv metaspades/scaffolds.fasta metaspades-${meta.id}_scaffolds.fasta
+        mv metaspades/contigs.fasta metaspades-${meta.id}_contigs.fasta
+        mv metaspades/spades.log metaspades-${meta.id}.log
+        gzip "metaspades-${meta.id}_contigs.fasta"
+        gzip "metaspades-${meta.id}_graph.gfa"
+        gzip -c "metaspades-${meta.id}_scaffolds.fasta" > "metaspades-${meta.id}_scaffolds.fasta.gz"
         cat <<-END_VERSIONS > versions.yml
         "${task.process}":
             python: \$(python --version 2>&1 | sed 's/Python //g')
-            metaspades: \$(metaspades.py --version | sed 's/SPAdes genome assembler v//; s/ \\[.*//')
+            metaspades: \$(metaspades.py --version | sed "s/SPAdes genome assembler v//; s/ \\[.*//")
         END_VERSIONS
         """
-
-
-
-
+    else
+        error "ERROR: '--metaspades_fix_cpus' was specified, but not succesfully applied. Likely this is caused by changed process properties in a custom config file."
 }

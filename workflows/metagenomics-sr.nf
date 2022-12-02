@@ -56,17 +56,16 @@ workflow METAGENOMICS_SR {
     ch_assemblies = Channel.empty()
     ch_short_reads_spades = ch_short_reads
     METASPADES (
-            ch_short_reads_spades.map { meta, fastq -> [ meta, fastq, [], [] ] },
-            []
+            ch_short_reads_spades.map { meta, fastq -> [ meta, fastq ] }
         )
-        ch_spades_assemblies = SPADES.out.scaffolds
+        ch_spades_assemblies = METASPADES.out.assembly
             .map { meta, assembly ->
                 def meta_new = meta.clone()
                 meta_new.assembler  = "SPAdes"
                 [ meta_new, assembly ]
             }
         ch_assemblies = ch_assemblies.mix(ch_spades_assemblies)
-        ch_versions = ch_versions.mix(SPADES.out.versions)
+        ch_versions = ch_versions.mix(METASPADES.out.versions)
 
     /*
     ================================================================================
