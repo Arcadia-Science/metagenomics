@@ -10,6 +10,14 @@
 
 nextflow.enable.dsl = 2
 
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    VALIDATE & PRINT PARAMETER SUMMARY
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
+
+// WorkflowMain.initialise(workflow, params, log)
+
 include {METAGENOMICS_SR} from './workflows/metagenomics-sr'
 
 workflow METAGENOMICS {
