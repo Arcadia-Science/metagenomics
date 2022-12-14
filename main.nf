@@ -16,7 +16,7 @@ nextflow.enable.dsl = 2
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-// WorkflowMain.initialise(workflow, params, log)
+WorkflowMain.initialise(workflow, params, log)
 
 include {METAGENOMICS_SR} from './workflows/metagenomics-sr'
 
