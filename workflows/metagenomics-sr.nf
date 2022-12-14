@@ -1,58 +1,64 @@
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    METAGENOMICS-SR WORKFLOW - QC, EVALUATION, AND ASSEMBLY OF METAGENOMIC SHORT READS
+    VALIDATE INPUTS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-//
-// NF-CORE MODULES installed with nf-core tools
-//
+def summary_params = NfcoreSchema.paramsSummaryMap(workflow, params)
+
+// Validate input parameters
+
+WorkflowMetagenomics.initialise(params, log)
+
+// Check input path parameters to see if exist
+def checkPathParamList = [ params.input ]
+for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
+
+// Check mandatory parameters
+if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input samplesheet not specified!' }
+
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    IMPORT NF-CORE MODULES
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
 include { FASTP                                  } from '../modules/nf-core/fastp/main'
+include { CUSTOM_DUMPSOFTWAREVERSIONS            } from '../modules/nf-core/custom/dumpsoftwareversions/main'
 
-// LOCAL MODULES
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    IMPORT LOCAL MODULES/SUBWORKFLOWS
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
 include { METASPADES                             } from '../modules/local/metaspades.nf'
-
-//
-// SUBWORKFLOWS
-//
 include { MAPPING_DEPTH                          } from '../subworkflows/local/mapping_depth.nf'
+include { INPUT_CHECK                            } from '../subworkflows/local/input_check'
 
-// TO help menu that prints for parameter options when adding those in for tools
-
-// input reads parameters - TODO change to input check subworkflow later
-ch_reads = Channel
-    .fromFilePairs(params.input, size: params.single_end ? 1 : 2)
-    .ifEmpty { exit 1, "Cannot find any reads matching: ${params.input}\nNB: Path needs to be enclosed in quotes!\nIf this is single-end data, please specify --single_end on the command line." }
-            .map { row ->
-                        def meta = [:]
-                        meta.id           = row[0]
-                        meta.group        = 0
-                        meta.single_end   = params.single_end
-                        return [ meta, row[1] ]
-                }
-
-// run the workflow
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    RUN MAIN WORKFLOW
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
 
 workflow METAGENOMICS_SR {
     ch_versions = Channel.empty()
 
-    /*
-    ================================================================================
-                                    Read Preprocessing & QC
-    ================================================================================
-    */
+    // read in samplesheet
+    INPUT_CHECK (
+        ch_input
+    )
+    ch_versions = ch_versions.mix(INPUT_CHECK.out.versions)
+
+    // read preprocessing and QC with fastp
     FASTP (
-        ch_reads,
+        INPUT_CHECK.out.reads,
         params.fastp_save_trimmed_fail,
         []
     )
     ch_short_reads = FASTP.out.reads
     ch_versions = ch_versions.mix(FASTP.out.versions.first())
-    /*
-    ================================================================================
-                                    Individual sample assembly with SPAdes
-    ================================================================================
-    */
+
+    // individual sample assembly with metaspades
     ch_assemblies = Channel.empty()
     ch_short_reads_spades = ch_short_reads
     METASPADES (
@@ -67,15 +73,14 @@ workflow METAGENOMICS_SR {
         ch_assemblies = ch_assemblies.mix(ch_spades_assemblies)
         ch_versions = ch_versions.mix(METASPADES.out.versions)
 
-    /*
-    ================================================================================
-                                    Index, mapping, coverage calculations
-                        mapping_depth.nf subworkflow with bowtie2, samtools, and jgisummarizecontigs
-    ================================================================================
-    */
-    //
+    // map reads to corresponding assembly and calculate depth with local subworkflow
     MAPPING_DEPTH(
         ch_assemblies,
         ch_short_reads
+    )
+
+    // dump software versions
+    CUSTOM_DUMPSOFTWAREVERSIONS (
+        ch_versions.unique().collectFile(name: 'collated_versions.yml')
     )
 }
