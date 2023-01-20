@@ -40,7 +40,7 @@ include { INPUT_CHECK                            } from '../subworkflows/local/i
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-workflow METAGENOMICS_SR {
+workflow ILLUMINA {
     ch_versions = Channel.empty()
 
     // read in samplesheet
@@ -78,6 +78,7 @@ workflow METAGENOMICS_SR {
         ch_assemblies,
         ch_short_reads
     )
+    ch_versions = ch_versions.mix(MAPPING_DEPTH.out.versions)
 
     // dump software versions
     CUSTOM_DUMPSOFTWAREVERSIONS (

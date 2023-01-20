@@ -52,4 +52,5 @@ workflow MAPPING_DEPTH {
     emit:
     grouped_mappings = ch_grouped_mappings
     metabat_depths = ch_metabat_depths
+    versions = ch_versions
 }
