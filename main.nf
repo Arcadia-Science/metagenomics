@@ -18,10 +18,26 @@ nextflow.enable.dsl = 2
 
 WorkflowMain.initialise(workflow, params, log)
 
-include {METAGENOMICS_SR} from './workflows/metagenomics-sr'
+if (params.platform == 'illumina') {
+    include { ILLUMINA } from './workflows/illumina'
+} else if (params.platform == 'nanopore') {
+    include { NANOPORE } from './workflows/nanopore'
+}
 
-workflow METAGENOMICS {
-    METAGENOMICS_SR ()
+
+workflow ARCADIASCIENCE_METAGENOMICS {
+    //
+    // WORKFLOW: Illumina processing and assembly
+    //
+    if (params.platform == 'illumina') {
+        ILLUMINA ()
+
+    //
+    // WORKFLOW: Nanopore processing and assembly
+    //
+    } else if (params.platform == 'nanopore') {
+        NANOPORE ()
+    }
 }
 
 /*
@@ -36,7 +52,7 @@ workflow METAGENOMICS {
 // See: https://github.com/nf-core/rnaseq/issues/619
 // without this have to provide -entry
 workflow {
-    METAGENOMICS ()
+    ARCADIASCIENCE_METAGENOMICS ()
 }
 
 /*

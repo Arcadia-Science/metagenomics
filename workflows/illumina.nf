@@ -40,7 +40,7 @@ include { INPUT_CHECK                            } from '../subworkflows/local/i
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-workflow METAGENOMICS_SR {
+workflow ILLUMINA {
     ch_versions = Channel.empty()
 
     // read in samplesheet
