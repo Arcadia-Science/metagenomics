@@ -78,6 +78,7 @@ workflow ILLUMINA {
         ch_assemblies,
         ch_short_reads
     )
+    ch_versions = ch_versions.mix(MAPPING_DEPTH.out.versions)
 
     // dump software versions
     CUSTOM_DUMPSOFTWAREVERSIONS (
