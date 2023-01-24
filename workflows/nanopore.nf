@@ -65,6 +65,12 @@ workflow NANOPORE {
     ch_versions = ch_versions.mix(FLYE.out.versions)
 
     // polishing with racon
+    RACON (
+        ch_qual_reads,
+        FLYE.out.fasta,
+        []
+    )
+    ch_versions = ch_versions.mix(RACON.out.versions)
 
 
     // dump software versions
