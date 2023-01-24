@@ -34,6 +34,7 @@ include { CUSTOM_DUMPSOFTWAREVERSIONS            } from '../modules/nf-core/cust
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 include { INPUT_CHECK                            } from '../subworkflows/local/input_check'
+include { MINIMAP2_SUBWORKFLOW                   } from '../subworkflows/local/minimap2_subworkflow'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -54,21 +55,27 @@ workflow NANOPORE {
     PORECHOP_ABI (
         INPUT_CHECK.out.reads
     )
-    ch_qual_reads = PORECHOP_ABI.out.reads
     ch_versions = ch_versions.mix(PORECHOP_ABI.out.versions)
 
     // assembly with flye
     FLYE (
-        ch_qual_reads,
+        PORECHOP_ABI.out.reads,
         "--nano-hq"
     )
     ch_versions = ch_versions.mix(FLYE.out.versions)
 
+    // map reads to assembly with minimap2
+    MINIMAP2_SUBWORKFLOW (
+        FLYE.out.fasta,
+        PORECHOP_ABI.out.reads
+    )
+    ch_versions = ch_versions.mix(MINIMAP2_SUBWORKFLOW.out.versions)
+
     // polishing with racon
     RACON (
-        ch_qual_reads,
+        PORECHOP_ABI.out.reads,
         FLYE.out.fasta,
-        []
+        MINIMAP2_SUBWORKFLOW.out.ch_align_sam
     )
     ch_versions = ch_versions.mix(RACON.out.versions)
 
@@ -77,7 +84,6 @@ workflow NANOPORE {
     CUSTOM_DUMPSOFTWAREVERSIONS (
         ch_versions.unique().collectFile(name: 'collated_versions.yml')
     )
-
 
 
 }
