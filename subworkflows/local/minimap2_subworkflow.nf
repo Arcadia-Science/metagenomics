@@ -2,12 +2,12 @@
 
 
 include { MINIMAP2_INDEX } from '../../modules/nf-core/minimap2/index'
-include { MINIMAP2_ALIGN } from '../../modules/nf-core/minimap2/align'
+include { MINIMAP2_ALIGN } from '../../modules/nf-core-modified/minimap2/align'
 
 workflow MINIMAP2_SUBWORKFLOW {
     take:
-    assembly
-    reads
+    assembly // tuple val(meta), path(fasta)
+    reads    // tuple val(meta), path(reads)
 
     main:
     ch_versions = Channel.empty()

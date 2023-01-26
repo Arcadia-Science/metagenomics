@@ -7,14 +7,16 @@ process RACON {
         'https://depot.galaxyproject.org/singularity/racon:1.4.20--h9a82719_1' :
         'quay.io/biocontainers/racon:1.4.20--h9a82719_1' }"
 
+    // modified from nf-core to fix the input handling, takes in SAM input from mapping
+
     input:
     tuple val(meta), path(reads)
     tuple val(assembly_meta), path(assembly)
-    tuple val(paf_meta), path(paf)
+    tuple val(sam_meta), path(sam)
 
     output:
     tuple val(meta), path('*_assembly_consensus.fasta.gz') , emit: improved_assembly
-    path "versions.yml"          , emit: versions
+    path "versions.yml"                                    , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -25,7 +27,7 @@ process RACON {
     """
     racon -t "$task.cpus" \\
         $reads \\
-        $paf \\
+        $sam \\
         $args \\
         $assembly > \\
         ${prefix}_assembly_consensus.fasta

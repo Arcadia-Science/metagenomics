@@ -2,6 +2,8 @@ process MINIMAP2_ALIGN {
     tag "$meta.id"
     label 'process_medium'
 
+    // modified with output to just SAM and not requiring the options for output to BAM/PAF, also requires tuple input for the index reference
+
     // Note: the versions here need to match the versions used in the mulled container below and minimap2/index
     conda "bioconda::minimap2=2.24 bioconda::samtools=1.14"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?

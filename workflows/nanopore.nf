@@ -24,7 +24,7 @@ if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input sample
 */
 include { PORECHOP_ABI                           } from '../modules/nf-core/porechop/abi/main'
 include { FLYE                                   } from '../modules/nf-core/flye/main'
-include { RACON                                  } from '../modules/nf-core/racon/main'
+include { RACON                                  } from '../modules/nf-core-modified/racon/main'
 include { CUSTOM_DUMPSOFTWAREVERSIONS            } from '../modules/nf-core/custom/dumpsoftwareversions/main'
 
 
@@ -79,11 +79,8 @@ workflow NANOPORE {
     )
     ch_versions = ch_versions.mix(RACON.out.versions)
 
-
     // dump software versions
     CUSTOM_DUMPSOFTWAREVERSIONS (
         ch_versions.unique().collectFile(name: 'collated_versions.yml')
     )
-
-
 }
