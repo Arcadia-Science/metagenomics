@@ -6,7 +6,7 @@ include {BOWTIE2_ASSEMBLY_BUILD                          } from '../../modules/l
 include {BOWTIE2_ASSEMBLY_ALIGN                          } from '../../modules/local/bowtie2_assembly_align'
 include {METABAT2_JGISUMMARIZEBAMCONTIGDEPTHS            } from '../../modules/nf-core/metabat2/jgisummarizebamcontigdepths/main'
 
-workflow MAPPING_DEPTH {
+workflow ILLUMINA_MAPPING_DEPTH {
     take:
     assemblies
     reads

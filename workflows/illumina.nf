@@ -30,9 +30,9 @@ include { CUSTOM_DUMPSOFTWAREVERSIONS            } from '../modules/nf-core/cust
     IMPORT LOCAL MODULES/SUBWORKFLOWS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
-include { METASPADES                             } from '../modules/local/metaspades.nf'
-include { MAPPING_DEPTH                          } from '../subworkflows/local/mapping_depth.nf'
-include { INPUT_CHECK                            } from '../subworkflows/local/input_check'
+include { METASPADES                                      } from '../modules/local/metaspades'
+include { ILLUMINA_MAPPING_DEPTH                          } from '../subworkflows/local/illumina_mapping_depth'
+include { INPUT_CHECK                                     } from '../subworkflows/local/input_check'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -74,11 +74,11 @@ workflow ILLUMINA {
         ch_versions = ch_versions.mix(METASPADES.out.versions)
 
     // map reads to corresponding assembly and calculate depth with local subworkflow
-    MAPPING_DEPTH(
+    ILLUMINA_MAPPING_DEPTH (
         ch_assemblies,
         ch_short_reads
     )
-    ch_versions = ch_versions.mix(MAPPING_DEPTH.out.versions)
+    ch_versions = ch_versions.mix(ILLUMINA_MAPPING_DEPTH.out.versions)
 
     // dump software versions
     CUSTOM_DUMPSOFTWAREVERSIONS (
