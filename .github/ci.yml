@@ -1,0 +1,61 @@
+name: Arcadia-Science/metagenomics CI
+# This workflow runs the pipeline with minimal test datasets for both the Illumina and Nanopore workflows to ensure completion without syntax errors
+
+on:
+  pull_request:
+  release:
+    types: [published]
+
+env:
+  NXF_ANSI_LOG: false
+
+concurrency:
+  group: "{% raw %}${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}{% endraw %}"
+  cancel-in-progress: true
+
+jobs:
+  test_illumina:
+    name: Run Illumina workflow with test data
+    # Only run on push if this is the nf-core dev branch (merged PRs)
+    if: "${{ github.event_name != 'push' || (github.event_name == 'push' && github.repository == 'Arcadia-Science/metagenomics') }}"
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        NXF_VER:
+          - "22.10.1"
+          - "latest-everything"
+    steps:
+      - name: Check out pipeline code
+        uses: actions/checkout@v3
+
+      - name: Install Nextflow
+        uses: nf-core/setup-nextflow@v1
+        with:
+          version: "${{ matrix.NXF_VER }}"
+
+      - name: Run Illumina workflow with test data
+        run: |
+          nextflow run ${GITHUB_WORKSPACE} -profile test_illumina,docker --outdir ./results_illumina
+
+  test_nanopore:
+    name: Run Nanopore workflow with test data
+    # Only run on push if this is the nf-core dev branch (merged PRs)
+    if: "${{ github.event_name != 'push' || (github.event_name == 'push' && github.repository == 'Arcadia-Science/metagenomics') }}"
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        NXF_VER:
+          - "22.10.1"
+          - "latest-everything"
+    steps:
+      - name: Check out pipeline code
+        uses: actions/checkout@v3
+
+      - name: Install Nextflow
+        uses: nf-core/setup-nextflow@v1
+        with:
+          version: "${{ matrix.NXF_VER }}"
+
+      - name: Run Nanopore workflow with test data
+        run: |
+          nextflow run ${GITHUB_WORKSPACE} -profile test_nanopore,docker --outdir ./results_nanopore
