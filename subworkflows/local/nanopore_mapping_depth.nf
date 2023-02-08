@@ -2,7 +2,7 @@
 
 
 include { MINIMAP2_INDEX }                          from '../../modules/nf-core/minimap2/index'
-include { MINIMAP2_ALIGN }                          from '../../modules/nf-core-modified/minimap2/align'
+include { MINIMAP2_ALIGN }                          from '../../modules/local/nf-core-modified/minimap2/align'
 include { METABAT2_JGISUMMARIZEBAMCONTIGDEPTHS }    from '../../modules/nf-core/metabat2/jgisummarizebamcontigdepths'
 
 workflow NANOPORE_MAPPING_DEPTH {
