@@ -24,7 +24,7 @@ if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input sample
 */
 include { PORECHOP_ABI                           } from '../modules/nf-core/porechop/abi/main'
 include { FLYE                                   } from '../modules/nf-core/flye/main'
-include { RACON                                  } from '../modules/nf-core-modified/racon/main'
+include { RACON                                  } from '../modules/local/nf-core-modified/racon/main'
 include { CUSTOM_DUMPSOFTWAREVERSIONS            } from '../modules/nf-core/custom/dumpsoftwareversions/main'
 
 
@@ -34,7 +34,7 @@ include { CUSTOM_DUMPSOFTWAREVERSIONS            } from '../modules/nf-core/cust
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 include { INPUT_CHECK                            } from '../subworkflows/local/input_check'
-include { MINIMAP2_SUBWORKFLOW                   } from '../subworkflows/local/minimap2_subworkflow'
+include { NANOPORE_MAPPING_DEPTH                 } from '../subworkflows/local/nanopore_mapping_depth'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -65,17 +65,17 @@ workflow NANOPORE {
     ch_versions = ch_versions.mix(FLYE.out.versions)
 
     // map reads to assembly with minimap2
-    MINIMAP2_SUBWORKFLOW (
+    NANOPORE_MAPPING_DEPTH (
         FLYE.out.fasta,
         PORECHOP_ABI.out.reads
     )
-    ch_versions = ch_versions.mix(MINIMAP2_SUBWORKFLOW.out.versions)
+    ch_versions = ch_versions.mix(NANOPORE_MAPPING_DEPTH.out.versions)
 
     // polishing with racon
     RACON (
         PORECHOP_ABI.out.reads,
         FLYE.out.fasta,
-        MINIMAP2_SUBWORKFLOW.out.ch_align_sam
+        NANOPORE_MAPPING_DEPTH.out.ch_align_sam
     )
     ch_versions = ch_versions.mix(RACON.out.versions)
 
