@@ -45,6 +45,7 @@ include { MULTIQC                                } from '../modules/nf-core/mult
 include { INPUT_CHECK                            } from '../subworkflows/local/input_check'
 include { RACON                                  } from '../modules/local/nf-core-modified/racon/main'
 include { NANOPORE_MAPPING_DEPTH                 } from '../subworkflows/local/nanopore_mapping_depth'
+include { QUAST                                  } from '../modules/local/nf-core-modified/quast/main'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -74,6 +75,11 @@ workflow NANOPORE {
     )
     ch_versions = ch_versions.mix(FLYE.out.versions)
 
+    // assembly QC with QUAST
+    QUAST (
+        FLYE.out.fasta.map{it -> it[1]}.collect() // aggregate assemblies together
+    )
+
     // map reads to assembly with minimap2
     NANOPORE_MAPPING_DEPTH (
         FLYE.out.fasta,
@@ -101,6 +107,7 @@ workflow NANOPORE {
     ch_multiqc_files = Channel.empty()
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml.collect())
+    ch_multiqc_files = ch_multiqc_files.mix(QUAST.out.results.collect().ifEmpty([]))
 
     MULTIQC(
         ch_multiqc_files.collect(),

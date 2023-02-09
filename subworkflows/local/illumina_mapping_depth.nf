@@ -4,7 +4,7 @@
 
 include {BOWTIE2_ASSEMBLY_BUILD                          } from '../../modules/local/bowtie2_assembly_build'
 include {BOWTIE2_ASSEMBLY_ALIGN                          } from '../../modules/local/bowtie2_assembly_align'
-include {METABAT2_JGISUMMARIZEBAMCONTIGDEPTHS            } from '../../modules/nf-core/metabat2/jgisummarizebamcontigdepths/main'
+include {METABAT2_JGISUMMARIZEBAMCONTIGDEPTHS            } from '../../modules/local/nf-core-modified/metabat2/jgisummarizebamcontigdepths/main'
 
 workflow ILLUMINA_MAPPING_DEPTH {
     take:

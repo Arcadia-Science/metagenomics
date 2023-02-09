@@ -35,6 +35,7 @@ ch_multiqc_custom_methods_description           = params.multiqc_methods_descrip
 include { FASTP                                  } from '../modules/nf-core/fastp/main'
 include { CUSTOM_DUMPSOFTWAREVERSIONS            } from '../modules/nf-core/custom/dumpsoftwareversions/main'
 include { MULTIQC                                } from '../modules/nf-core/multiqc/main'
+include { FASTQC                                 } from '../modules/nf-core/fastqc/main'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -44,6 +45,7 @@ include { MULTIQC                                } from '../modules/nf-core/mult
 include { METASPADES                                      } from '../modules/local/metaspades'
 include { ILLUMINA_MAPPING_DEPTH                          } from '../subworkflows/local/illumina_mapping_depth'
 include { INPUT_CHECK                                     } from '../subworkflows/local/input_check'
+include { QUAST                                           } from '../modules/local/nf-core-modified/quast/main'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -59,6 +61,12 @@ workflow ILLUMINA {
         ch_input
     )
     ch_versions = ch_versions.mix(INPUT_CHECK.out.versions)
+
+    // run fastqc on raw reads
+    FASTQC (
+        INPUT_CHECK.out.reads
+    )
+    ch_versions = ch_versions.mix(FASTQC.out.versions.first())
 
     // read preprocessing and QC with fastp
     FASTP (
@@ -81,8 +89,14 @@ workflow ILLUMINA {
                 meta_new.assembler  = "SPAdes"
                 [ meta_new, assembly ]
             }
-        ch_assemblies = ch_assemblies.mix(ch_spades_assemblies)
-        ch_versions = ch_versions.mix(METASPADES.out.versions)
+    ch_assemblies = ch_assemblies.mix(ch_spades_assemblies)
+    ch_versions = ch_versions.mix(METASPADES.out.versions)
+
+    // run QUAST on assemblies for stats
+    QUAST (
+        METASPADES.out.assembly.map{it -> it[1]}.collect() // aggregate assemblies together
+    )
+    ch_versions = ch_versions.mix(QUAST.out.versions)
 
     // map reads to corresponding assembly and calculate depth with local subworkflow
     ILLUMINA_MAPPING_DEPTH (
@@ -103,6 +117,9 @@ workflow ILLUMINA {
     ch_multiqc_files = Channel.empty()
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml.collect())
+    ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
+    ch_multiqc_files = ch_multiqc_files.mix(QUAST.out.results.collect().ifEmpty([]))
+    ch_multiqc_files = ch_multiqc_files.mix(FASTP.out.json.collect{it[1]}.ifEmpty([]))
 
     MULTIQC(
         ch_multiqc_files.collect(),
