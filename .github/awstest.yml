@@ -20,9 +20,9 @@ jobs:
           workdir: s3://${{ secrets.AWS_S3_BUCKET }}/work/metagenomics/work-${{ github.sha }}
           parameters: |
             {
-              "outdir": "s3://${{ secrets.AWS_S3_BUCKET }}/metagenomics/results-${{ github.sha }}"
+              "outdir": "s3://${{ secrets.AWS_S3_BUCKET }}/metagenomics/test_results-${{ github.sha }}"
             }
-          profiles: test_illumina,test_nanopore,aws_tower
+          profiles: test_illumina,aws_tower
       - uses: actions/upload-artifact@v3
         with:
           name: Tower debug log file
