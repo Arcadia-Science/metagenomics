@@ -1,0 +1,61 @@
+name: nf-core linting
+# This workflow is triggered on pushes and PRs to the repository.
+# It runs the `nf-core lint` and markdown lint tests to ensure
+# that the code meets the nf-core guidelines.
+on:
+  push:
+  pull_request:
+  release:
+    types: [published]
+
+jobs:
+  EditorConfig:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+
+      - name: Install editorconfig-checker
+        run: npm install -g editorconfig-checker
+
+      - name: Run ECLint check
+        run: editorconfig-checker -exclude README.md $(find .* -type f | grep -v '.git\|.py\|.md\|json\|yml\|yaml\|html\|css\|work\|.nextflow\|build\|nf_core.egg-info\|log.txt\|Makefile')
+
+  Prettier:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+
+      - name: Install Prettier
+        run: npm install -g prettier
+
+      - name: Run Prettier --check
+        run: prettier --check ${GITHUB_WORKSPACE}
+
+  PythonBlack:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Check code lints with Black
+        uses: psf/black@stable
+
+      # If the above check failed, post a comment on the PR explaining the failure
+      - name: Post PR comment
+        if: failure()
+        uses: mshick/add-pr-comment@v1
+        with:
+          message: |
+            ## Python linting (`black`) is failing
+            To keep the code consistent with lots of contributors, we run automated code consistency checks.
+            To fix this CI test, please run:
+            * Install [`black`](https://black.readthedocs.io/en/stable/): `pip install black`
+            * Fix formatting errors in your pipeline: `black .`
+            Once you push these changes the test should pass, and you can hide this comment :+1:
+            We highly recommend setting up Black in your code editor so that this formatting is done automatically on save. Ask about it on Slack for help!
+            Thanks again for your contribution!
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          allow-repeats: false
