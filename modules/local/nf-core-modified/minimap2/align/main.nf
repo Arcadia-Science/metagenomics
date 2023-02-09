@@ -1,5 +1,5 @@
 process MINIMAP2_ALIGN {
-    tag "$meta.id"
+    tag "${index_meta.id}-vs-${reads_meta.id}"
     label 'process_medium'
 
     // modified with output to just SAM and not requiring the options for output to BAM/PAF, also requires tuple input for the index reference
@@ -11,13 +11,13 @@ process MINIMAP2_ALIGN {
         'quay.io/biocontainers/mulled-v2-66534bcbb7031a148b13e2ad42583020b9cd25c4:1679e915ddb9d6b4abda91880c4b48857d471bd8-0' }"
 
     input:
-    tuple val(meta), path(reads)
+    tuple val(reads_meta), path(reads)
     tuple val(index_meta), path(index)
 
     output:
-    tuple val(meta), path("*.sam"),             emit: sam
-    tuple val(meta), path("*.sorted.bam"),      emit: sorted_bam
-    tuple val(meta), path("*.bam.bai"),         emit: indexed_bam
+    tuple val(reads_meta), path("*.sam"),             emit: sam
+    tuple val(reads_meta), path("*.sorted.bam"),      emit: sorted_bam
+    tuple val(reads_meta), path("*.bam.bai"),         emit: indexed_bam
     path "versions.yml",                        emit: versions
 
     when:
@@ -25,15 +25,15 @@ process MINIMAP2_ALIGN {
 
     script:
     def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: "${meta.id}"
+    def name = "metaflye-${index_meta.id}-vs-${reads_meta.id}"
     """
     minimap2 \\
         $args \\
         -t $task.cpus \\
         $index \\
-        $reads > ${prefix}.sam
-    samtools view -@ $task.cpus -bS ${prefix}.sam | samtools sort -@ $task.cpus -o ${prefix}.sorted.bam
-    samtools index ${prefix}.sorted.bam ${prefix}.bam.bai
+        $reads > ${name}.sam
+    samtools view -@ $task.cpus -bS ${name}.sam | samtools sort -@ $task.cpus -o ${name}.sorted.bam
+    samtools index ${name}.sorted.bam ${name}.bam.bai
 
 
     cat <<-END_VERSIONS > versions.yml
