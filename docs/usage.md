@@ -1,7 +1,9 @@
 # Arcadia-Science/metagenomics Usage
+
 This page provides documentation on how to use the Arcadia-Science/metagenomics pipeline.
 
 ## Input specifications
+
 This pipeline processes metagenomic reads in FASTQ format from either Illumina or Nanopore technologies. **Important note**: This pipeline separately processes Illumina or Nanopore metagenomes and does not perform hybrid assembly, polishing of Nanopore assemblies with Illumina reads, or scaffolding with Nanopore reads.
 
 For Nanopore reads, the pipeline takes as direct input a single fastq file and does not perform demultiplexing or basecalling, so it expects that those steps should be done prior to feeding into the pipeline and aggregating into a single fastq file.
@@ -12,6 +14,7 @@ The workflow takes a CSV samplesheet listing the sample names and paths to the f
 Neither the `sample` or `fastq*` columns may contain spaces, and the `fastq` columns contains the path(s) to your fastq file(s).
 
 If you are inputting Illumina reads, the samplesheet looks like the following:
+
 ```
 sample,fastq_1,fastq_2
 comm_1,https://github.com/Arcadia-Science/test-datasets/raw/main/metagenomics/illumina/comm_1_subsampled_1.fq.gz,https://github.com/Arcadia-Science/test-datasets/raw/main/metagenomics/illumina/comm_1_subsampled_2.fq.gz
@@ -19,6 +22,7 @@ vir_1,https://github.com/Arcadia-Science/test-datasets/raw/main/metagenomics/ill
 ```
 
 If you are inputting Nanopore reads, the samplesheet looks like the following:
+
 ```
 sample,fastq_1,fastq_2
 om,https://github.com/Arcadia-Science/test-datasets/raw/main/metagenomics/ont/om_subset_reads.fq.gz,
@@ -28,10 +32,12 @@ el,https://github.com/Arcadia-Science/test-datasets/raw/main/metagenomics/ont/el
 Note that even for Nanopore reads which the input is in a single fastq file, still include the third column for `fastq_2` - the pipeline for processing Nanopore reads will ignore this and process your Nanopore reads that are in a single fastq file.
 
 ## Running the pipeline
+
 A typical command for running the pipeline looks like:
 ` nextflow run Arcadia-Science/metagenomics --input <SAMPLESHEET.csv> --outdir <OUTDIR> --platform <illumina|nanopore> -profile docker`
 
 This will launch the pipeline with the `docker` configuration profile. See below for more information about profiles. The options for `--platform` are either `illumina` or `nanopore` depending on your sequencing file input. Therefore, you cannot run both Illumina and Nanopore sequencing files in the same run - instead submit separate runs. The pipeline will create the following files and directories in your working directory:
+
 ```
 work                # Directory containing the nextflow working files
 <OUTDIR>            # Finished results in specified location (defined with --outdir)
@@ -84,4 +90,5 @@ Nextflow handles job submissions and supervises running jobs. The Nextflow proce
 ### Pipeline-specific arguments
 
 #### `--platform`
-This argument is required and you must input either `illumina` or `nanopore` depending on your input sequencing files. Therefore a combination of Illumina and Nanopore sequencing files **CANNOT** be run in the same submission - instead submit two jobs differentiating between the two file types. 
+
+This argument is required and you must input either `illumina` or `nanopore` depending on your input sequencing files. Therefore a combination of Illumina and Nanopore sequencing files **CANNOT** be run in the same submission - instead submit two jobs differentiating between the two file types.
