@@ -46,6 +46,7 @@ include { INPUT_CHECK                            } from '../subworkflows/local/i
 include { RACON                                  } from '../modules/local/nf-core-modified/racon/main'
 include { NANOPORE_MAPPING_DEPTH                 } from '../subworkflows/local/nanopore_mapping_depth'
 include { QUAST                                  } from '../modules/local/nf-core-modified/quast/main'
+include { NANOPLOT                               } from '../modules/local/nf-core-modified/nanoplot/main'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -61,6 +62,12 @@ workflow NANOPORE {
         ch_input
     )
     ch_versions = ch_versions.mix(INPUT_CHECK.out.versions)
+
+    // stats on reads with nanoplot
+    NANOPLOT (
+        INPUT_CHECK.out.reads
+    )
+    ch_versions = ch_versions.mix(NANOPLOT.out.versions)
 
     // adapter removal with PORECHOP_ABI
     PORECHOP_ABI (
@@ -107,6 +114,8 @@ workflow NANOPORE {
     ch_multiqc_files = Channel.empty()
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml.collect())
+    ch_multiqc_files = ch_multiqc_files.mix(NANOPLOT.out.txt.collect().ifEmpty([]))
+    ch_multiqc_files = ch_multiqc_files.mix(PORECHOP_ABI.out.log.collect().ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(QUAST.out.results.collect().ifEmpty([]))
 
     MULTIQC(
