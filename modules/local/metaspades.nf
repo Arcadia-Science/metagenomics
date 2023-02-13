@@ -12,12 +12,11 @@ process METASPADES {
     tuple val(meta), path(reads)
 
     output:
-    tuple val(meta), path("metaspades-${meta.id}_scaffolds.fasta"), emit: assembly
-    path "metaspades-${meta.id}.log"                              , emit: log
-    path "metaspades-${meta.id}_contigs.fasta.gz"                 , emit: contigs_gz
-    path "metaspades-${meta.id}_scaffolds.fasta.gz"               , emit: assembly_gz
-    path "metaspades-${meta.id}_graph.gfa.gz"                     , emit: graph
-    path "versions.yml"                                , emit: versions
+    tuple val(meta), path("metaspades-${meta.id}_scaffolds.fasta.gz")       , emit: assembly
+    path "metaspades-${meta.id}.log"                                        , emit: log
+    path "metaspades-${meta.id}_contigs.fasta.gz"                           , emit: contigs
+    path "metaspades-${meta.id}_graph.gfa.gz"                               , emit: graph
+    path "versions.yml"                                                     , emit: versions
 
     script:
     def args = task.ext.args ?: ''

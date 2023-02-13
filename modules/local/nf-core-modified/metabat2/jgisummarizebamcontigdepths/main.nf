@@ -12,7 +12,7 @@ process METABAT2_JGISUMMARIZEBAMCONTIGDEPTHS {
     tuple val(meta), path(bai)
 
     output:
-    tuple val(meta), path("*.txt.gz"), emit: depth
+    tuple val(meta), path("*.depth.txt.gz"), emit: depth
     path "versions.yml"                    , emit: versions
 
     when:
@@ -25,11 +25,11 @@ process METABAT2_JGISUMMARIZEBAMCONTIGDEPTHS {
     export OMP_NUM_THREADS=$task.cpus
 
     jgi_summarize_bam_contig_depths \\
-        --outputDepth ${prefix}.txt \\
+        --outputDepth ${prefix}.depth.txt \\
         $args \\
         $bam
 
-    bgzip --threads $task.cpus ${prefix}.txt
+    bgzip --threads $task.cpus ${prefix}.depth.txt
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

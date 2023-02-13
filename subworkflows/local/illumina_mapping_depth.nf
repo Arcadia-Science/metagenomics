@@ -4,7 +4,7 @@
 
 include {BOWTIE2_ASSEMBLY_BUILD                          } from '../../modules/local/bowtie2_assembly_build'
 include {BOWTIE2_ASSEMBLY_ALIGN                          } from '../../modules/local/bowtie2_assembly_align'
-include {METABAT2_JGISUMMARIZEBAMCONTIGDEPTHS            } from '../../modules/nf-core/metabat2/jgisummarizebamcontigdepths/main'
+include {METABAT2_JGISUMMARIZEBAMCONTIGDEPTHS            } from '../../modules/local/nf-core-modified/metabat2/jgisummarizebamcontigdepths/main'
 
 workflow ILLUMINA_MAPPING_DEPTH {
     take:
@@ -15,42 +15,27 @@ workflow ILLUMINA_MAPPING_DEPTH {
     ch_versions = Channel.empty()
 
     // build index
-    BOWTIE2_ASSEMBLY_BUILD (assemblies)
+    BOWTIE2_ASSEMBLY_BUILD(assemblies)
     ch_versions = ch_versions.mix(BOWTIE2_ASSEMBLY_BUILD.out.versions)
+    ch_index = BOWTIE2_ASSEMBLY_BUILD.out.index
 
-    // prepare for mapping
-    ch_reads_bowtie2 = reads.map{ meta, reads -> [ meta.id, meta, reads ] }
-    ch_bowtie2_input = BOWTIE2_ASSEMBLY_BUILD.out.assembly_index
-        .map{ meta, assembly, index -> [ meta.id, meta, assembly, index ] }
-        .combine(ch_reads_bowtie2, by: 0)
-        .map{ id, assembly_meta, assembly, index, reads_meta, reads -> [ assembly_meta, assembly, index, reads_meta, reads ] }
-
-    // align
-    BOWTIE2_ASSEMBLY_ALIGN (ch_bowtie2_input)
-    ch_grouped_mappings = BOWTIE2_ASSEMBLY_ALIGN.out.mappings
-        .groupTuple(by: 0)
-        .map{ meta, assembly, bams, bais -> [ meta, assembly.sort()[0], bams, bais ]}
+    // align reads to index, get sorted and indexed BAM
+    BOWTIE2_ASSEMBLY_ALIGN(assemblies, ch_index, reads)
     ch_versions = ch_versions.mix(BOWTIE2_ASSEMBLY_ALIGN.out.versions)
-
-    // depth input prep
-    ch_depth_input = ch_grouped_mappings.map { meta, assembly, bams, bais ->
-                                            def meta_new = meta.clone()
-                                        [meta_new, bams, bais]
-    }
+    ch_align_bam = BOWTIE2_ASSEMBLY_ALIGN.out.bam
+    ch_indexed_bam = BOWTIE2_ASSEMBLY_ALIGN.out.indexed_bam
+    ch_log = BOWTIE2_ASSEMBLY_ALIGN.out.log
 
     // summarize contigs with metabat2
-    METABAT2_JGISUMMARIZEBAMCONTIGDEPTHS (ch_depth_input )
+    METABAT2_JGISUMMARIZEBAMCONTIGDEPTHS (ch_align_bam, ch_indexed_bam)
     ch_versions = ch_versions.mix(METABAT2_JGISUMMARIZEBAMCONTIGDEPTHS.out.versions.first())
-    ch_metabat_depths = METABAT2_JGISUMMARIZEBAMCONTIGDEPTHS.out.depth
-        .map { meta, depths ->
-                def meta_new = meta.clone()
-                meta_new['binner'] = 'MetaBAT2'
-                [meta_new, depths]
-                }
+    ch_depth = METABAT2_JGISUMMARIZEBAMCONTIGDEPTHS.out.depth
 
     // emit results
     emit:
-    grouped_mappings = ch_grouped_mappings
-    metabat_depths = ch_metabat_depths
+    ch_index
+    ch_align_bam
+    ch_indexed_bam
+    ch_depth
     versions = ch_versions
 }
