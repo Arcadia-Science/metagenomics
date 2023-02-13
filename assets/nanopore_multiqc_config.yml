@@ -3,15 +3,18 @@ report_comment: >
   analysis pipeline using the Nanopore workflow.
 report_section_order:
   nanostat:
-    order: -1000
-  quast:
     order: -1001
-  "Arcadia-Science-metagenomics-nanopore-methods-description":
+  quast:
     order: -1002
-  software_versions:
+  Samtools:
     order: -1003
-  "Arcadia-Science-metagenomics-summary":
+  "Arcadia-Science-metagenomics-nanopore-methods-description":
     order: -1004
+  software_versions:
+    order: -1005
+  "Arcadia-Science-metagenomics-summary":
+    order: -1006
 
 show_analysis_path: False
 export_plots: true
+log_filesize_limit: 2000000000 # read larger files and not automatically skip
