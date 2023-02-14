@@ -10,7 +10,7 @@
             "type": "object",
             "fa_icon": "fas fa-terminal",
             "description": "Define where the pipeline should find input data and save output data.",
-            "required": ["input", "outdir"],
+            "required": ["input", "outdir", "platform"],
             "properties": {
                 "input": {
                     "type": "string",
@@ -28,6 +28,13 @@
                     "description": "The output directory where the results will be saved. You have to use absolute paths to storage on Cloud infrastructure.",
                     "fa_icon": "fas fa-folder-open"
                 },
+                "platform": {
+                    "type": "string",
+                    "default": "illumina",
+                    "enum": ["illumina", "nanopore"],
+                    "help_text": "Select the platform of your input reads. Options are illumina for Illumina short reads or nanopore for ONT reads",
+                    "description": "Sequencing technology platform of reads, must be either illumina or nanopore. Default set to illumina."
+                },
                 "email": {
                     "type": "string",
                     "description": "Email address for completion summary.",
@@ -41,21 +48,6 @@
                     "fa_icon": "fas fa-file-signature"
                 }
             }
-        },
-        "reference_genome_options": {
-            "title": "Reference genome options",
-            "type": "object",
-            "fa_icon": "fas fa-dna",
-            "description": "Reference genome related files and options required for the workflow.",
-            "properties": {}
-        },
-        "institutional_config_options": {
-            "title": "Institutional config options",
-            "type": "object",
-            "fa_icon": "fas fa-university",
-            "description": "Parameters used to describe centralised config profiles. These should not be edited.",
-            "help_text": "The centralised nf-core configuration profiles use a handful of pipeline parameters to describe themselves. This information is then printed to the Nextflow log when you run a pipeline. You should not need to change these values when you run a pipeline.",
-            "properties": {}
         },
         "max_job_request_options": {
             "title": "Max job request options",
@@ -208,16 +200,39 @@
             "$ref": "#/definitions/input_output_options"
         },
         {
-            "$ref": "#/definitions/reference_genome_options"
-        },
-        {
-            "$ref": "#/definitions/institutional_config_options"
-        },
-        {
             "$ref": "#/definitions/max_job_request_options"
         },
         {
             "$ref": "#/definitions/generic_options"
         }
-    ]
+    ],
+    "properties": {
+        "single_end": {
+            "type": "boolean"
+        },
+        "custom_config_version": {
+            "type": "string",
+            "default": "master"
+        },
+        "custom_config_base": {
+            "type": "string",
+            "default": "https://raw.githubusercontent.com/nf-core/configs/master"
+        },
+        "config_profile_description": {
+            "type": "string",
+            "default": "None"
+        },
+        "config_profile_contact": {
+            "type": "string",
+            "default": "None"
+        },
+        "config_profile_url": {
+            "type": "string",
+            "default": "None"
+        },
+        "config_profile_name": {
+            "type": "string",
+            "default": "None"
+        }
+    }
 }
