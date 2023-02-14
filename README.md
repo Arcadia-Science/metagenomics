@@ -14,7 +14,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool
 
 ## Pipeline Summary
 
-This pipeline performs QC and profiling of metagenomes obtained through either Illumina or Nanopore technologies. The pipeline consists of two separate workflows for processing the Illumina and Nanopore data and producing assemblies. Downstream steps for summarizing the composition of metagenomes are mostly identical for the two technologies. You can find more information about how the pipeline operates in the `docs`.
+This pipeline performs QC and profiling of metagenomes obtained through either Illumina or Nanopore technologies. The pipeline consists of two separate workflows for processing the Illumina and Nanopore data and producing assemblies. Downstream steps for summarizing the composition of metagenomes are mostly identical for the two technologies. You can find more information about how the pipeline operates in the [`docs`](docs/README.md).
 
 ## Quick Start
 
@@ -42,7 +42,7 @@ Note that some form of configuration will be needed so that Nextflow knows how t
 4. Start running your own analysis!
 
    ```bash
-   nextflow run Arcadia-Science/metagenomics --input samplesheet.csv --outdir <OUTDIR> --platform <PLATFORM> -profile <docker/singularity/conda/institute>
+   nextflow run Arcadia-Science/metagenomics --input samplesheet.csv --outdir <OUTDIR> --platform <illumina|nanopore> -profile <docker/singularity/conda/institute>
    ```
 
 ## Citations
