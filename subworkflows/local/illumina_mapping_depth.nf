@@ -36,7 +36,6 @@ workflow ILLUMINA_MAPPING_DEPTH {
     ch_stats = SAMTOOLS_STATS.out.stats
     ch_versions = ch_versions.mix(SAMTOOLS_STATS.out.versions)
 
-
     // emit results
     emit:
     ch_stats         // stats from samtools stats for % mapped
