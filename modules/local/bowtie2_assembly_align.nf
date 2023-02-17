@@ -14,8 +14,7 @@ process BOWTIE2_ASSEMBLY_ALIGN {
     tuple val(reads_meta), path(reads)
 
     output:
-    tuple val(reads_meta), path("*.bam")                                        , emit: bam
-    tuple val(reads_meta), path("*.bam.bai")                                    , emit: indexed_bam
+    tuple val(reads_meta), path("*.sorted.bam"), path("*.bam.bai")              , emit: sorted_indexed_bam
     tuple val(assembly_meta), val(reads_meta), path("*.bowtie2.log")            , emit: log
     path "versions.yml"                                                         , emit: versions
 
@@ -32,8 +31,8 @@ process BOWTIE2_ASSEMBLY_ALIGN {
         $input \\
         2> "${name}.bowtie2.log" | \
         samtools view -@ "${task.cpus}" -bS | \
-        samtools sort -@ "${task.cpus}" -o "${name}.bam"
-    samtools index "${name}.bam"
+        samtools sort -@ "${task.cpus}" -o "${name}.sorted.bam"
+    samtools index "${name}.sorted.bam"
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         bowtie2: \$(echo \$(bowtie2 --version 2>&1) | sed 's/^.*bowtie2-align-s version //; s/ .*\$//')

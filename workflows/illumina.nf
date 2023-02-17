@@ -112,6 +112,7 @@ workflow ILLUMINA {
     ch_multiqc_files = ch_multiqc_files.mix(CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml.collect())
     ch_multiqc_files = ch_multiqc_files.mix(QUAST.out.results.collect().ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(FASTP.out.json.collect{it[1]}.ifEmpty([]))
+    ch_multiqc_files = ch_multiqc_files.mix(ILLUMINA_MAPPING_DEPTH.out.ch_stats.collect().ifEmpty([]))
 
     MULTIQC(
         ch_multiqc_files.collect(),

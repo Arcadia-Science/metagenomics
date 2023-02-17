@@ -15,10 +15,9 @@ process MINIMAP2_ALIGN {
     tuple val(index_meta), path(index)
 
     output:
-    tuple val(reads_meta), path("*.sam"),             emit: sam
-    tuple val(reads_meta), path("*.sorted.bam"),      emit: sorted_bam
-    tuple val(reads_meta), path("*.bam.bai"),         emit: indexed_bam
-    path "versions.yml",                        emit: versions
+    tuple val(reads_meta), path("*.sam")                                , emit: sam
+    tuple val(reads_meta), path("*.sorted.bam"), path("*.bam.bai")      , emit: sorted_indexed_bam
+    path "versions.yml"                                                 , emit: versions
 
     when:
     task.ext.when == null || task.ext.when

@@ -6,12 +6,15 @@ report_section_order:
     order: -1001
   quast:
     order: -1002
-  "Arcadia-Science-metagenomics-illumina-methods-description":
+  Samtools:
     order: -1003
-  software_versions:
+  "Arcadia-Science-metagenomics-illumina-methods-description":
     order: -1004
-  "Arcadia-Science-metagenomics-summary":
+  software_versions:
     order: -1005
+  "Arcadia-Science-metagenomics-summary":
+    order: -1006
 
 show_analysis_path: False
 export_plots: true
+log_filesize_limit: 2000000000 # read larger files and not automatically skip

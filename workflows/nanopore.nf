@@ -116,6 +116,7 @@ workflow NANOPORE {
     ch_multiqc_files = ch_multiqc_files.mix(CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml.collect())
     ch_multiqc_files = ch_multiqc_files.mix(NANOPLOT.out.txt.collect().ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(QUAST.out.results.collect().ifEmpty([]))
+    ch_multiqc_files = ch_multiqc_files.mix(NANOPORE_MAPPING_DEPTH.out.ch_stats.collect().ifEmpty([]))
 
     MULTIQC(
         ch_multiqc_files.collect(),
