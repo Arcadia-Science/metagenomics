@@ -41,7 +41,7 @@ workflow ILLUMINA_MAPPING_DEPTH {
     emit:
     ch_stats         // stats from samtools stats for % mapped
     ch_index         // bowtie2 index
-    ch_align_bam    // sorted, indexed BAMs
+    ch_align_bam     // sorted, indexed BAMs
     ch_depth        // depth table from metabat2
     versions = ch_versions
 }
