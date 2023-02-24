@@ -1,6 +1,6 @@
 // Influenced by https://github.dev/nf-core/mag but modified ouput handling
 process BOWTIE2_ASSEMBLY_ALIGN {
-    tag "${assembly_meta.id}-vs-${reads_meta.id}"
+    tag "${index_meta.id}-vs-${reads_meta.id}"
     label 'process_medium'
 
     conda (params.enable_conda ? "bioconda::bowtie2=2.4.2 bioconda::samtools=1.11 conda-forge::pigz=2.3.4" : null)
@@ -9,18 +9,16 @@ process BOWTIE2_ASSEMBLY_ALIGN {
         'quay.io/biocontainers/mulled-v2-ac74a7f02cebcfcc07d8e8d1d750af9c83b4d45a:577a697be67b5ae9b16f637fd723b8263a3898b3-0' }"
 
     input:
-    tuple val(assembly_meta), path(assembly)
-    tuple val(index_meta), path(index)
-    tuple val(reads_meta), path(reads)
+    tuple val(index_meta), path(index), val(reads_meta), path(reads)
 
     output:
     tuple val(reads_meta), path("*.sorted.bam"), path("*.bam.bai")              , emit: sorted_indexed_bam
-    tuple val(assembly_meta), val(reads_meta), path("*.bowtie2.log")            , emit: log
+    tuple val(index_meta), val(reads_meta), path("*.bowtie2.log")            , emit: log
     path "versions.yml"                                                         , emit: versions
 
     script:
     def args = task.ext.args ?: ''
-    def name = "metaspades-${assembly_meta.id}-vs-${reads_meta.id}"
+    def name = "metaspades-${index_meta.id}-vs-${reads_meta.id}"
     def input = "-1 \"${reads[0]}\" -2 \"${reads[1]}\""
     """
     INDEX=`find -L ./ -name "*.rev.1.bt2l" -o -name "*.rev.1.bt2" | sed 's/.rev.1.bt2l//' | sed 's/.rev.1.bt2//'`

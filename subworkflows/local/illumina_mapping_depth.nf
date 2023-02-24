@@ -9,19 +9,26 @@ include { SAMTOOLS_STATS                                  } from '../../modules/
 
 workflow ILLUMINA_MAPPING_DEPTH {
     take:
-    assemblies
+    assembly
     reads
 
     main:
     ch_versions = Channel.empty()
 
     // build index
-    BOWTIE2_ASSEMBLY_BUILD(assemblies)
+    BOWTIE2_ASSEMBLY_BUILD(assembly)
     ch_versions = ch_versions.mix(BOWTIE2_ASSEMBLY_BUILD.out.versions)
     ch_index = BOWTIE2_ASSEMBLY_BUILD.out.index
 
+    // match index to corresponding reads
+    ch_reads = reads.map{meta, reads -> [meta.id, meta, reads]}
+    ch_mapping = ch_index
+        .map{meta, index -> [meta.id, meta, index]}
+        .combine(ch_reads, by:0)
+        .map{id, index_meta, index, reads_meta, reads -> [index_meta, index, reads_meta, reads]}
+
     // align reads to index, get sorted and indexed BAM
-    BOWTIE2_ASSEMBLY_ALIGN(assemblies, ch_index, reads)
+    BOWTIE2_ASSEMBLY_ALIGN(ch_mapping)
     ch_versions = ch_versions.mix(BOWTIE2_ASSEMBLY_ALIGN.out.versions)
     ch_align_bam = BOWTIE2_ASSEMBLY_ALIGN.out.sorted_indexed_bam
     ch_log = BOWTIE2_ASSEMBLY_ALIGN.out.log

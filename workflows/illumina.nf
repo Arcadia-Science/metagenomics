@@ -79,7 +79,7 @@ workflow ILLUMINA {
         ch_spades_assemblies = METASPADES.out.assembly
             .map { meta, assembly ->
                 def meta_new = meta.clone()
-                meta_new.assembler  = "SPAdes"
+                meta_new.assembler  = "metaSPAdes"
                 [ meta_new, assembly ]
             }
     ch_assemblies = ch_assemblies.mix(ch_spades_assemblies)

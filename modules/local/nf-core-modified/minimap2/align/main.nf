@@ -11,8 +11,7 @@ process MINIMAP2_ALIGN {
         'quay.io/biocontainers/mulled-v2-66534bcbb7031a148b13e2ad42583020b9cd25c4:1679e915ddb9d6b4abda91880c4b48857d471bd8-0' }"
 
     input:
-    tuple val(reads_meta), path(reads)
-    tuple val(index_meta), path(index)
+    tuple val(index_meta), path(index), val(reads_meta), path(reads)
 
     output:
     tuple val(reads_meta), path("*.sam")                                , emit: sam
