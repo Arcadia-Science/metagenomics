@@ -39,7 +39,7 @@ workflow ILLUMINA_MAPPING_DEPTH {
     ch_depth = METABAT2_JGISUMMARIZEBAMCONTIGDEPTHS.out.depth
 
     // samtools stats
-    SAMTOOLS_STATS(ch_align_bam, assemblies)
+    SAMTOOLS_STATS(ch_align_bam, assembly)
     ch_stats = SAMTOOLS_STATS.out.stats
     ch_versions = ch_versions.mix(SAMTOOLS_STATS.out.versions)
 
