@@ -21,11 +21,9 @@ workflow ILLUMINA_MAPPING_DEPTH {
     ch_index = BOWTIE2_ASSEMBLY_BUILD.out.index
 
     // match index to corresponding reads
-    ch_reads = reads.map{meta, reads -> [meta.id, meta, reads]}
-    ch_mapping = ch_index
-        .map{meta, index -> [meta.id, meta, index]}
-        .combine(ch_reads, by:0)
-        .map{id, index_meta, index, reads_meta, reads -> [index_meta, index, reads_meta, reads]}
+    view(ch_index)
+    view(reads)
+    ch_mapping = ch_index.join(reads)
 
     // align reads to index, get sorted and indexed BAM
     BOWTIE2_ASSEMBLY_ALIGN(ch_mapping)

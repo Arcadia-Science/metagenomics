@@ -1,5 +1,5 @@
 process MINIMAP2_ALIGN {
-    tag "${index_meta.id}-vs-${reads_meta.id}"
+    tag "${meta.id}-vs-${meta.id}"
     label 'process_medium'
 
     // modified with output to just SAM and not requiring the options for output to BAM/PAF, also requires tuple input for the index reference
@@ -11,11 +11,11 @@ process MINIMAP2_ALIGN {
         'quay.io/biocontainers/mulled-v2-66534bcbb7031a148b13e2ad42583020b9cd25c4:1679e915ddb9d6b4abda91880c4b48857d471bd8-0' }"
 
     input:
-    tuple val(index_meta), path(index), val(reads_meta), path(reads)
+    tuple val(meta), path(index), path(reads)
 
     output:
-    tuple val(reads_meta), path("*.sam")                                , emit: sam
-    tuple val(reads_meta), path("*.sorted.bam"), path("*.bam.bai")      , emit: sorted_indexed_bam
+    tuple val(meta), path("*.sam")                                , emit: sam
+    tuple val(meta), path("*.sorted.bam"), path("*.bam.bai")      , emit: sorted_indexed_bam
     path "versions.yml"                                                 , emit: versions
 
     when:
@@ -23,7 +23,7 @@ process MINIMAP2_ALIGN {
 
     script:
     def args = task.ext.args ?: ''
-    def name = "metaflye-${index_meta.id}-vs-${reads_meta.id}"
+    def name = "metaflye-${meta.id}-vs-${meta.id}"
     """
     minimap2 \\
         $args \\

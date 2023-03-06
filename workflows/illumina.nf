@@ -72,17 +72,10 @@ workflow ILLUMINA {
 
     // individual sample assembly with metaspades
     ch_assemblies = Channel.empty()
-    ch_short_reads_spades = ch_short_reads
     METASPADES (
-            ch_short_reads_spades.map { meta, fastq -> [ meta, fastq ] }
-        )
-        ch_spades_assemblies = METASPADES.out.assembly
-            .map { meta, assembly ->
-                def meta_new = meta.clone()
-                meta_new.assembler  = "metaSPAdes"
-                [ meta_new, assembly ]
-            }
-    ch_assemblies = ch_assemblies.mix(ch_spades_assemblies)
+        ch_short_reads
+    )
+    ch_assemblies = METASPADES.out.assembly
     ch_versions = ch_versions.mix(METASPADES.out.versions)
 
     // run QUAST on assemblies for stats
