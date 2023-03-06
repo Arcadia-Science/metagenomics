@@ -13,7 +13,7 @@ process BOWTIE2_ASSEMBLY_ALIGN {
 
     output:
     tuple val(meta), path("*.sorted.bam"), path("*.bam.bai")              , emit: sorted_indexed_bam
-    tuple val(meta), val(meta), path("*.bowtie2.log")                     , emit: log
+    tuple val(meta), path("*.bowtie2.log")                                , emit: log
     path "versions.yml"                                                   , emit: versions
 
     script:
