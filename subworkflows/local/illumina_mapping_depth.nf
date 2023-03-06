@@ -21,8 +21,6 @@ workflow ILLUMINA_MAPPING_DEPTH {
     ch_index = BOWTIE2_ASSEMBLY_BUILD.out.index
 
     // match index to corresponding reads
-    view(ch_index)
-    view(reads)
     ch_mapping = ch_index.join(reads)
 
     // align reads to index, get sorted and indexed BAM
