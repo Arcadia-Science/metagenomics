@@ -19,8 +19,11 @@ workflow NANOPORE_MAPPING_DEPTH {
     ch_versions = ch_versions.mix(MINIMAP2_INDEX.out.versions)
     ch_index = MINIMAP2_INDEX.out.index
 
+    // match index to the corresponding reads
+    ch_mapping = ch_index.join(reads)
+
     // align reads to index, get SAM for polishing, BAM for calculating depth
-    MINIMAP2_ALIGN(reads, ch_index)
+    MINIMAP2_ALIGN(ch_mapping)
     ch_versions = ch_versions.mix(MINIMAP2_ALIGN.out.versions)
     ch_align_sam = MINIMAP2_ALIGN.out.sam
     ch_align_bam = MINIMAP2_ALIGN.out.sorted_indexed_bam
