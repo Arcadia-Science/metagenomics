@@ -3,6 +3,7 @@
 import argparse
 import os
 import sys
+import gzip
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
 
@@ -29,13 +30,18 @@ def parse_args(args=None):
 # Read in fasta file and rename contigs
 def rename_contigs(fasta, assembler, output):
     contig_id = 0
-    name = os.path.basename(fasta).replace(".fasta", "").strip().splitlines()[0]
-    with open(output, "w") as outfile:
-        for seq_record in SeqIO.parse(fasta, "fasta"):
-            contig_id = contig_id + 1
-            newid = str(contig_id).zfill(5)
-            outfile.write(">" + name + "_" + assembler + "_" + str(newid) + "\n")
-            outfile.write(str(seq_record.seq) + "\n")
+    name = os.path.basename(fasta).replace(".fasta.gz", "").strip().splitlines()[0]
+    with gzip.open(output, "wb") as outfile:
+        with gzip.open(fasta, "rt") as handle:
+            for seq_record in SeqIO.parse(handle, "fasta"):
+                contig_id = contig_id + 1
+                newid = str(contig_id).zfill(5)
+                header = ">" + name + "_" + assembler + "_contig_" + str(newid) + "\n"
+                seq = str(seq_record.seq) + "\n"
+                outfile.write(header.encode())
+                outfile.write(seq.encode())
+    handle.close()
+    outfile.close()
 
 
 def main(args=None):
