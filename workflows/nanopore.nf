@@ -45,6 +45,7 @@ include { MULTIQC                                } from '../modules/nf-core/mult
 include { INPUT_CHECK                            } from '../subworkflows/local/input_check'
 include { RACON                                  } from '../modules/local/nf-core-modified/racon/main'
 include { NANOPORE_MAPPING_DEPTH                 } from '../subworkflows/local/nanopore_mapping_depth'
+include { RENAME_CONTIGS                         } from '../modules/local/rename_contigs'
 include { QUAST                                  } from '../modules/local/nf-core-modified/quast/main'
 include { NANOPLOT                               } from '../modules/local/nf-core-modified/nanoplot/main'
 
@@ -82,14 +83,20 @@ workflow NANOPORE {
     )
     ch_versions = ch_versions.mix(FLYE.out.versions)
 
+    // rename contigs after assembly for cleaner downstream steps
+    RENAME_CONTIGS (
+        FLYE.out.fasta, "metaflye"
+    )
+    reformatted_assemblies = RENAME_CONTIGS.out.reformatted_assembly
+
     // assembly QC with QUAST
     QUAST (
-        FLYE.out.fasta.map{it -> it[1]}.collect() // aggregate assemblies together
+        reformatted_assemblies.map{it -> it[1]}.collect() // aggregate assemblies together
     )
 
     // map reads to assembly with minimap2
     NANOPORE_MAPPING_DEPTH (
-        FLYE.out.fasta,
+        reformatted_assemblies,
         PORECHOP_ABI.out.reads
     )
     ch_versions = ch_versions.mix(NANOPORE_MAPPING_DEPTH.out.versions)
@@ -97,7 +104,7 @@ workflow NANOPORE {
     // polishing with racon
     RACON (
         PORECHOP_ABI.out.reads,
-        FLYE.out.fasta,
+        reformatted_assemblies,
         NANOPORE_MAPPING_DEPTH.out.ch_align_sam
     )
     ch_versions = ch_versions.mix(RACON.out.versions)

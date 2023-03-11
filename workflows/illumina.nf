@@ -44,6 +44,7 @@ include { MULTIQC                                } from '../modules/nf-core/mult
 include { METASPADES                                      } from '../modules/local/metaspades'
 include { ILLUMINA_MAPPING_DEPTH                          } from '../subworkflows/local/illumina_mapping_depth'
 include { INPUT_CHECK                                     } from '../subworkflows/local/input_check'
+include { RENAME_CONTIGS                                  } from '../modules/local/rename_contigs'
 include { QUAST                                           } from '../modules/local/nf-core-modified/quast/main'
 
 /*
@@ -78,15 +79,21 @@ workflow ILLUMINA {
     ch_assemblies = METASPADES.out.assembly
     ch_versions = ch_versions.mix(METASPADES.out.versions)
 
-    // run QUAST on assemblies for stats
+    // rename contigs after assembly for cleaner downstream steps
+    RENAME_CONTIGS (
+        ch_assemblies, "metaspades"
+    )
+    reformatted_assemblies = RENAME_CONTIGS.out.reformatted_assembly
+
+    // run QUAST on reformatted assemblies for stats
     QUAST (
-        METASPADES.out.assembly.map{it -> it[1]}.collect() // aggregate assemblies together
+        reformatted_assemblies.map{it -> it[1]}.collect() // aggregate assemblies together
     )
     ch_versions = ch_versions.mix(QUAST.out.versions)
 
     // map reads to corresponding assembly and calculate depth with local subworkflow
     ILLUMINA_MAPPING_DEPTH (
-        ch_assemblies,
+        reformatted_assemblies,
         ch_short_reads
     )
     ch_versions = ch_versions.mix(ILLUMINA_MAPPING_DEPTH.out.versions)

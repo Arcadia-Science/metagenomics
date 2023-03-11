@@ -7,6 +7,7 @@ import gzip
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
 
+
 # Arguments
 def parse_args(args=None):
     Description = "Rename contigs in a FASTA file after assembly."
