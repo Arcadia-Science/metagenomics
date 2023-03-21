@@ -104,12 +104,12 @@ workflow ILLUMINA {
         ch_short_reads,
         "reads"
     )
-    ch_versions = ch_versions.mix(SOURMASH_PROFILE_READS.out.versions)
 
     SOURMASH_PROFILE_ASSEMBS (
         reformatted_assemblies,
         "assembly"
     )
+    ch_versions = ch_versions.mix(SOURMASH_PROFILE_ASSEMBS.out.versions)
 
     // dump software versions
     CUSTOM_DUMPSOFTWAREVERSIONS (
