@@ -46,6 +46,8 @@ include { ILLUMINA_MAPPING_DEPTH                          } from '../subworkflow
 include { INPUT_CHECK                                     } from '../subworkflows/local/input_check'
 include { RENAME_CONTIGS                                  } from '../modules/local/rename_contigs'
 include { QUAST                                           } from '../modules/local/nf-core-modified/quast/main'
+include { SOURMASH_PROFILING as SOURMASH_PROFILE_READS    } from '../subworkflows/local/sourmash_profiling'
+include { SOURMASH_PROFILING as SOURMASH_PROFILE_ASSEMBS  } from '../subworkflows/local/sourmash_profiling'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -97,6 +99,17 @@ workflow ILLUMINA {
         ch_short_reads
     )
     ch_versions = ch_versions.mix(ILLUMINA_MAPPING_DEPTH.out.versions)
+
+    SOURMASH_PROFILE_READS (
+        ch_short_reads,
+        "reads"
+    )
+    ch_versions = ch_versions.mix(SOURMASH_PROFILE_READS.out.versions)
+
+    SOURMASH_PROFILE_ASSEMBS (
+        reformatted_assemblies,
+        "assembly"
+    )
 
     // dump software versions
     CUSTOM_DUMPSOFTWAREVERSIONS (
