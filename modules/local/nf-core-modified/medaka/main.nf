@@ -20,13 +20,15 @@ process MEDAKA {
     script:
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
+    // gunzip required because minimap2 won't take .gz as input
     """
+    gunzip -c $assembly > ${prefix}_unzipped_assembly.fa
     medaka_consensus \\
         -t $task.cpus \\
         $args \\
         -i $reads \\
-        -d $assembly \\
-        -o ./
+        -d ${prefix}_unzipped_assembly.fa \\
+        -o polishing
 
     mv consensus.fasta ${prefix}.fa
 

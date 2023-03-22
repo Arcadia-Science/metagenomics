@@ -43,7 +43,7 @@ include { MULTIQC                                } from '../modules/nf-core/mult
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 include { INPUT_CHECK                                    } from '../subworkflows/local/input_check'
-include { MEDAKA                                         } from '../modules/nf-core/medaka/main'
+include { MEDAKA                                         } from '../modules/local/nf-core-modified/medaka/main'
 include { NANOPORE_MAPPING_DEPTH                         } from '../subworkflows/local/nanopore_mapping_depth'
 include { RENAME_CONTIGS                                 } from '../modules/local/rename_contigs'
 include { QUAST                                          } from '../modules/local/nf-core-modified/quast/main'
