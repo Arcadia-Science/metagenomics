@@ -42,12 +42,14 @@ include { MULTIQC                                } from '../modules/nf-core/mult
     IMPORT LOCAL MODULES/SUBWORKFLOWS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
-include { INPUT_CHECK                            } from '../subworkflows/local/input_check'
-include { RACON                                  } from '../modules/local/nf-core-modified/racon/main'
-include { NANOPORE_MAPPING_DEPTH                 } from '../subworkflows/local/nanopore_mapping_depth'
-include { RENAME_CONTIGS                         } from '../modules/local/rename_contigs'
-include { QUAST                                  } from '../modules/local/nf-core-modified/quast/main'
-include { NANOPLOT                               } from '../modules/local/nf-core-modified/nanoplot/main'
+include { INPUT_CHECK                                    } from '../subworkflows/local/input_check'
+include { RACON                                          } from '../modules/local/nf-core-modified/racon/main'
+include { NANOPORE_MAPPING_DEPTH                         } from '../subworkflows/local/nanopore_mapping_depth'
+include { RENAME_CONTIGS                                 } from '../modules/local/rename_contigs'
+include { QUAST                                          } from '../modules/local/nf-core-modified/quast/main'
+include { NANOPLOT                                       } from '../modules/local/nf-core-modified/nanoplot/main'
+include { SOURMASH_PROFILING as SOURMASH_PROFILE_READS   } from '../subworkflows/local/sourmash_profiling'
+include { SOURMASH_PROFILING as SOURMASH_PROFILE_ASSEMBS } from '../subworkflows/local/sourmash_profiling'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -74,11 +76,12 @@ workflow NANOPORE {
     PORECHOP_ABI (
         INPUT_CHECK.out.reads
     )
+    ch_reads = PORECHOP_ABI.out.reads
     ch_versions = ch_versions.mix(PORECHOP_ABI.out.versions)
 
     // assembly with flye
     FLYE (
-        PORECHOP_ABI.out.reads,
+        ch_reads,
         "--nano-hq"
     )
     ch_versions = ch_versions.mix(FLYE.out.versions)
@@ -87,27 +90,38 @@ workflow NANOPORE {
     RENAME_CONTIGS (
         FLYE.out.fasta, "metaflye"
     )
-    reformatted_assemblies = RENAME_CONTIGS.out.reformatted_assembly
+    ch_reformatted_assemblies = RENAME_CONTIGS.out.reformatted_assembly
 
     // assembly QC with QUAST
     QUAST (
-        reformatted_assemblies.map{it -> it[1]}.collect() // aggregate assemblies together
+        ch_reformatted_assemblies.map{it -> it[1]}.collect() // aggregate assemblies together
     )
 
     // map reads to assembly with minimap2
     NANOPORE_MAPPING_DEPTH (
-        reformatted_assemblies,
-        PORECHOP_ABI.out.reads
+        ch_reformatted_assemblies,
+        ch_reads
     )
     ch_versions = ch_versions.mix(NANOPORE_MAPPING_DEPTH.out.versions)
 
     // polishing with racon
     RACON (
-        PORECHOP_ABI.out.reads,
-        reformatted_assemblies,
+        ch_reads,
+        ch_reformatted_assemblies,
         NANOPORE_MAPPING_DEPTH.out.ch_align_sam
     )
     ch_versions = ch_versions.mix(RACON.out.versions)
+
+    SOURMASH_PROFILE_READS (
+        ch_reads,
+        "reads"
+    )
+
+    SOURMASH_PROFILE_ASSEMBS (
+        ch_reformatted_assemblies,
+        "assembly"
+    )
+    ch_versions = ch_versions.mix(SOURMASH_PROFILE_ASSEMBS.out.versions)
 
     // dump software versions
     CUSTOM_DUMPSOFTWAREVERSIONS (
