@@ -30,9 +30,9 @@ process MEDAKA {
         -d ${prefix}_unzipped_assembly.fa \\
         -o polishing
 
-    mv consensus.fasta ${prefix}.fa
+    mv polishing/consensus.fasta ${prefix}_polished.fa
 
-    gzip -n ${prefix}.fa
+    gzip -n ${prefix}_polished.fa
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
