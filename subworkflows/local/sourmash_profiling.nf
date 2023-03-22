@@ -22,7 +22,7 @@ workflow SOURMASH_PROFILING {
         .map {
             signatures ->
                 def meta = [:]
-                meta.id = "k21"
+                meta.id = "k31"
                 [ meta, signatures ]
         }
     SOURMASH_COMPARE(ch_compare, seqtype, [], true, true)
