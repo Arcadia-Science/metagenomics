@@ -1,6 +1,7 @@
 process SOURMASH_SKETCH {
     tag "$meta.id"
     label 'process_low'
+    // bumped up version and added seqtype parameter to distinguish between reads and assemblies
 
     conda "bioconda::sourmash=4.6.1"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
