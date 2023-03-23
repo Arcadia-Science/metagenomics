@@ -43,7 +43,7 @@ include { MULTIQC                                } from '../modules/nf-core/mult
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 include { INPUT_CHECK                                    } from '../subworkflows/local/input_check'
-include { RACON                                          } from '../modules/local/nf-core-modified/racon/main'
+include { MEDAKA                                         } from '../modules/local/nf-core-modified/medaka/main'
 include { NANOPORE_MAPPING_DEPTH                         } from '../subworkflows/local/nanopore_mapping_depth'
 include { RENAME_CONTIGS                                 } from '../modules/local/rename_contigs'
 include { QUAST                                          } from '../modules/local/nf-core-modified/quast/main'
@@ -105,12 +105,11 @@ workflow NANOPORE {
     ch_versions = ch_versions.mix(NANOPORE_MAPPING_DEPTH.out.versions)
 
     // polishing with racon
-    RACON (
-        ch_reads,
-        ch_reformatted_assemblies,
-        NANOPORE_MAPPING_DEPTH.out.ch_align_sam
+    ch_medaka = ch_reads.join(ch_reformatted_assemblies)
+    MEDAKA (
+        ch_medaka
     )
-    ch_versions = ch_versions.mix(RACON.out.versions)
+    ch_versions = ch_versions.mix(MEDAKA.out.versions)
 
     SOURMASH_PROFILE_READS (
         ch_reads,
