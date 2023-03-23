@@ -7,7 +7,7 @@ workflow SOURMASH_PROFILING {
     sequences  // tuple val(meta), path(assemblies) OR tuple val(meta), path(reads)
     seqtype
     databases  // path(databases)
-    lineages   // path(lineages)
+    // path(lineages)
 
     main:
     ch_versions = Channel.empty()

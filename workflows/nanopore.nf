@@ -16,7 +16,7 @@ for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true
 
 // Check mandatory parameters
 if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input samplesheet not specified!' }
-if (params.sourmash_dbs) { ch_sourmash_dbs_file = file(sourmash_dbs) } else { exit 1, 'Samplesheet CSV of sourmash DBs not specified!' }
+if (params.sourmash_dbs) { ch_sourmash_dbs_file = file(params.sourmash_dbs) } else { exit 1, 'Samplesheet CSV of sourmash DBs not specified!' }
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -51,8 +51,6 @@ include { QUAST                                          } from '../modules/loca
 include { NANOPLOT                                       } from '../modules/local/nf-core-modified/nanoplot/main'
 include { SOURMASH_PROFILING as SOURMASH_PROFILE_READS   } from '../subworkflows/local/sourmash_profiling'
 include { SOURMASH_PROFILING as SOURMASH_PROFILE_ASSEMBS } from '../subworkflows/local/sourmash_profiling'
-include { SOURMASH_DBS_CHECK                              } from '../subworkflows/local/sourmash_dbs_check'
-
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -114,14 +112,25 @@ workflow NANOPORE {
     )
     ch_versions = ch_versions.mix(MEDAKA.out.versions)
 
+    // prepare sourmash dbs from input CSV
+    ch_sourmash_dbs = Channel.fromPath(ch_sourmash_dbs_file)
+        .splitCsv (header:true, sep:",")
+        .map { row ->
+            return [row.subMap(['db_name']), file(row.db_path)]
+            }
+
+    // sourmash profiling on reads
     SOURMASH_PROFILE_READS (
         ch_reads,
-        "reads"
+        "reads",
+        ch_sourmash_dbs
     )
 
+    // sourmash profiling on assemblies
     SOURMASH_PROFILE_ASSEMBS (
         ch_reformatted_assemblies,
-        "assembly"
+        "assembly",
+        ch_sourmash_dbs
     )
     ch_versions = ch_versions.mix(SOURMASH_PROFILE_ASSEMBS.out.versions)
 
