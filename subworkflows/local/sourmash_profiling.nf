@@ -7,6 +7,7 @@ workflow SOURMASH_PROFILING {
     sequences  // tuple val(meta), path(assemblies) OR tuple val(meta), path(reads)
     seqtype
     databases  // path(databases)
+    lineages   // path(lineages)
 
     main:
     ch_versions = Channel.empty()
@@ -15,6 +16,7 @@ workflow SOURMASH_PROFILING {
     SOURMASH_SKETCH(sequences, seqtype)
     ch_signatures = SOURMASH_SKETCH.out.signatures
     ch_versions = ch_versions.mix(SOURMASH_SKETCH.out.versions)
+    view(ch_signatures)
 
     // compare
     ch_compare = ch_signatures
@@ -41,6 +43,10 @@ workflow SOURMASH_PROFILING {
     )
     ch_gather_result = SOURMASH_GATHER.out.result
     ch_versions = ch_versions.mix(SOURMASH_GATHER.out.versions)
+
+    // taxonomy against lineage CSV
+
+    // sourmashconsumr module for running functions to process all files
 
     emit:
     ch_signatures
