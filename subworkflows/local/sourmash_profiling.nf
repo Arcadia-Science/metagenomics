@@ -6,7 +6,7 @@ workflow SOURMASH_PROFILING {
     take:
     sequences  // tuple val(meta), path(assemblies) OR tuple val(meta), path(reads)
     seqtype
-    // databases  // path(databases)
+    databases  // path(databases)
 
     main:
     ch_versions = Channel.empty()
@@ -31,10 +31,21 @@ workflow SOURMASH_PROFILING {
     ch_versions = ch_versions.mix(SOURMASH_COMPARE.out.versions)
 
     // gather against database
+    SOURMASH_GATHER(ch_signatures,
+        databases,
+        seqtype,
+        [], // val save_unassigned
+        [], // val save_matches_sig
+        [], // val save_prefetch
+        []  // val save_prefetch_csv
+    )
+    ch_gather_result = SOURMASH_GATHER.out.result
+    ch_versions = ch_versions.mix(SOURMASH_GATHER.out.versions)
 
     emit:
     ch_signatures
     ch_compare_matrix
     ch_compare_csv
+    ch_gather_result
     versions = ch_versions
 }

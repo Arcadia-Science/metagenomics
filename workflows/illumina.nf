@@ -16,6 +16,7 @@ for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true
 
 // Check mandatory parameters
 if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input samplesheet not specified!' }
+if (params.sourmash_dbs) { ch_sourmash_dbs_file = file(params.sourmash_dbs) } else { exit 1, 'Samplesheet CSV of sourmash DBs not specified!' }
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -100,14 +101,24 @@ workflow ILLUMINA {
     )
     ch_versions = ch_versions.mix(ILLUMINA_MAPPING_DEPTH.out.versions)
 
+    // prepare sourmash dbs from input CSV
+    ch_sourmash_dbs = Channel.fromPath(ch_sourmash_dbs_file)
+        .splitCsv (header:true, sep:",")
+        .map { row ->
+            return [row.subMap(['db_name']), file(row.db_path)]
+            }
+    // sourmash profiling subworkflow for reads
     SOURMASH_PROFILE_READS (
         ch_short_reads,
-        "reads"
+        "reads",
+        ch_sourmash_dbs
     )
 
+    // sourmash profiling subworkflow for assemblies
     SOURMASH_PROFILE_ASSEMBS (
         reformatted_assemblies,
-        "assembly"
+        "assembly",
+        ch_sourmash_dbs
     )
     ch_versions = ch_versions.mix(SOURMASH_PROFILE_ASSEMBS.out.versions)
 

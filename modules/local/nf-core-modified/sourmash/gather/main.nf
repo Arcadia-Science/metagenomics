@@ -10,7 +10,8 @@ process SOURMASH_GATHER {
 
     input:
     tuple val(meta), path(signature)
-    path(database)
+    tuple val(meta_db), path(database)
+    val seqtype
     val save_unassigned
     val save_matches_sig
     val save_prefetch
@@ -30,7 +31,7 @@ process SOURMASH_GATHER {
 
     script:
     def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: "${meta.id}"
+    def prefix = task.ext.prefix ?: "${meta.id}.${seqtype}"
     def unassigned  = save_unassigned   ? "--output-unassigned ${prefix}_unassigned.sig.zip" : ''
     def matches     = save_matches_sig  ? "--save-matches ${prefix}_matches.sig.zip"         : ''
     def prefetch    = save_prefetch     ? "--save-prefetch ${prefix}_prefetch.sig.zip"       : ''
@@ -39,7 +40,7 @@ process SOURMASH_GATHER {
     """
     sourmash gather \\
         $args \\
-        --output ${prefix}.csv.gz \\
+        --output ${prefix}.csv \\
         ${unassigned} \\
         ${matches} \\
         ${prefetch} \\
@@ -47,6 +48,7 @@ process SOURMASH_GATHER {
         ${signature} \\
         ${database}
 
+    touch ${prefix}.csv
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         sourmash: \$(echo \$(sourmash --version 2>&1) | sed 's/^sourmash //' )
