@@ -1,6 +1,7 @@
 process MEDAKA {
     tag "$meta.id"
     label 'process_high'
+    // modified to add a gunzip command because medaka won't take in .gz assembly files
 
     conda "bioconda::medaka=1.4.4"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
