@@ -101,26 +101,20 @@ workflow ILLUMINA {
     )
     ch_versions = ch_versions.mix(ILLUMINA_MAPPING_DEPTH.out.versions)
 
-    // prepare sourmash dbs from input CSV
-    ch_sourmash_dbs = Channel.fromPath(ch_sourmash_dbs_file)
-        .splitCsv (header:true, sep:",")
-        .map { row ->
-            return [row.subMap(['db_name']), file(row.db_path)]
-            }
     // sourmash profiling subworkflow for reads
     SOURMASH_PROFILE_READS (
         ch_short_reads,
         "reads",
-        ch_sourmash_dbs
+        ch_sourmash_dbs_file
     )
 
     // sourmash profiling subworkflow for assemblies
-    SOURMASH_PROFILE_ASSEMBS (
-        reformatted_assemblies,
-        "assembly",
-        ch_sourmash_dbs
-    )
-    ch_versions = ch_versions.mix(SOURMASH_PROFILE_ASSEMBS.out.versions)
+    // SOURMASH_PROFILE_ASSEMBS (
+    //     reformatted_assemblies,
+    //     "assembly",
+    //     ch_sourmash_dbs_file
+    // )
+    // ch_versions = ch_versions.mix(SOURMASH_PROFILE_ASSEMBS.out.versions)
 
     // dump software versions
     CUSTOM_DUMPSOFTWAREVERSIONS (

@@ -112,25 +112,18 @@ workflow NANOPORE {
     )
     ch_versions = ch_versions.mix(MEDAKA.out.versions)
 
-    // prepare sourmash dbs from input CSV
-    ch_sourmash_dbs = Channel.fromPath(ch_sourmash_dbs_file)
-        .splitCsv (header:true, sep:",")
-        .map { row ->
-            return [row.subMap(['db_name']), file(row.db_path)]
-            }
-
     // sourmash profiling on reads
     SOURMASH_PROFILE_READS (
         ch_reads,
         "reads",
-        ch_sourmash_dbs
+        ch_sourmash_dbs_file
     )
 
     // sourmash profiling on assemblies
     SOURMASH_PROFILE_ASSEMBS (
         ch_reformatted_assemblies,
         "assembly",
-        ch_sourmash_dbs
+        ch_sourmash_dbs_file
     )
     ch_versions = ch_versions.mix(SOURMASH_PROFILE_ASSEMBS.out.versions)
 

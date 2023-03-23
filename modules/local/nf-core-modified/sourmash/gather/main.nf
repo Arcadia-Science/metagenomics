@@ -10,7 +10,7 @@ process SOURMASH_GATHER {
 
     input:
     tuple val(meta), path(signature)
-    tuple val(meta_db), path(database)
+    path(database)
     val seqtype
     val save_unassigned
     val save_matches_sig
