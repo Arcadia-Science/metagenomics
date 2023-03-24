@@ -1,6 +1,7 @@
 include { SOURMASH_SKETCH                           }   from '../../modules/local/nf-core-modified/sourmash/sketch'
 include { SOURMASH_COMPARE                          }   from '../../modules/local/nf-core-modified/sourmash/compare'
 include { SOURMASH_GATHER                           }   from '../../modules/local/nf-core-modified/sourmash/gather'
+include { SOURMASH_TAXANNOTATE                      }   from '../../modules/local/nf-core-modified/sourmash/taxannotate'
 
 workflow SOURMASH_PROFILING {
     take:

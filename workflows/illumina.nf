@@ -16,7 +16,7 @@ for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true
 
 // Check mandatory parameters
 if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input samplesheet not specified!' }
-if (params.sourmash_dbs) { ch_sourmash_dbs_file = file(params.sourmash_dbs) } else { exit 1, 'Samplesheet CSV of sourmash DBs not specified!' }
+if (params.sourmash_dbs) { ch_sourmash_dbs = file(params.sourmash_dbs) } else { exit 1, 'List of sourmash databases not provided!' }
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -105,7 +105,7 @@ workflow ILLUMINA {
     SOURMASH_PROFILE_READS (
         ch_short_reads,
         "reads",
-        ch_sourmash_dbs_file
+        ch_sourmash_dbs
     )
 
     // sourmash profiling subworkflow for assemblies
