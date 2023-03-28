@@ -2,6 +2,7 @@ process SOURMASH_GATHER {
     tag "$meta_database.database"
     label 'process_low'
     // bumped up version
+    // added seqtype and modified input channel
 
     conda "bioconda::sourmash=4.6.1"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -30,7 +31,7 @@ process SOURMASH_GATHER {
 
     script:
     def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: "${meta.id}.${seqtype}"
+    def prefix = task.ext.prefix ?: "${meta.id}.${seqtype}.${meta_database}"
     def unassigned  = save_unassigned   ? "--output-unassigned ${prefix}_unassigned.sig.zip" : ''
     def matches     = save_matches_sig  ? "--save-matches ${prefix}_matches.sig.zip"         : ''
     def prefetch    = save_prefetch     ? "--save-prefetch ${prefix}_prefetch.sig.zip"       : ''
