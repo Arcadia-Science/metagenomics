@@ -1,5 +1,5 @@
 process SOURMASH_GATHER {
-    tag "$meta.id"
+    tag "$meta_database.database"
     label 'process_low'
     // bumped up version
 
@@ -9,8 +9,7 @@ process SOURMASH_GATHER {
         'quay.io/biocontainers/sourmash:4.6.1--hdfd78af_0' }"
 
     input:
-    tuple val(meta), path(signature)
-    path(database)
+    tuple val(meta), path(signature), val(meta_database), path(database_path)
     val seqtype
     val save_unassigned
     val save_matches_sig
@@ -46,7 +45,7 @@ process SOURMASH_GATHER {
         ${prefetch} \\
         ${prefetchcsv} \\
         ${signature} \\
-        ${database}
+        ${database_path}
 
     touch ${prefix}.csv
     cat <<-END_VERSIONS > versions.yml
