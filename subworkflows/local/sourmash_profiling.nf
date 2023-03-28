@@ -48,8 +48,10 @@ workflow SOURMASH_PROFILING {
     ch_versions = ch_versions.mix(SOURMASH_GATHER.out.versions)
 
     // taxonomy against lineage CSV
+    SOURMASH_TAXANNOATE()
 
     // sourmashconsumr module for running functions to process all files
+    // calls a script that outputs an HTML document for Rmarkdown rendering???
 
     emit:
     ch_signatures
