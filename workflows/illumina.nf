@@ -87,17 +87,17 @@ workflow ILLUMINA {
     RENAME_CONTIGS (
         ch_assemblies, "metaspades"
     )
-    reformatted_assemblies = RENAME_CONTIGS.out.reformatted_assembly
+    ch_reformatted_assemblies = RENAME_CONTIGS.out.reformatted_assembly
 
     // run QUAST on reformatted assemblies for stats
     QUAST (
-        reformatted_assemblies.map{it -> it[1]}.collect() // aggregate assemblies together
+        ch_reformatted_assemblies.map{it -> it[1]}.collect() // aggregate assemblies together
     )
     ch_versions = ch_versions.mix(QUAST.out.versions)
 
     // map reads to corresponding assembly and calculate depth with local subworkflow
     ILLUMINA_MAPPING_DEPTH (
-        reformatted_assemblies,
+        ch_reformatted_assemblies,
         ch_short_reads
     )
     ch_versions = ch_versions.mix(ILLUMINA_MAPPING_DEPTH.out.versions)
@@ -105,19 +105,22 @@ workflow ILLUMINA {
     // check sourmash databases for queuing into profiling processes
     SOURMASH_DBS_CHECK(ch_sourmash_dbs_csv)
     sourmash_databases = SOURMASH_DBS_CHECK.out.sourmash_databases
+    sourmash_lineages = SOURMASH_DBS_CHECK.out.sourmash_lineages
 
     // sourmash profiling subworkflow for reads
     SOURMASH_PROFILE_READS (
         ch_short_reads,
         "reads",
-        sourmash_databases
+        sourmash_databases,
+        sourmash_lineages
     )
 
     // sourmash profiling subworkflow for assemblies
     SOURMASH_PROFILE_ASSEMBS (
-        reformatted_assemblies,
+        ch_reformatted_assemblies,
         "assembly",
-        sourmash_databases
+        sourmash_databases,
+        sourmash_lineages
     )
     ch_versions = ch_versions.mix(SOURMASH_PROFILE_ASSEMBS.out.versions)
 

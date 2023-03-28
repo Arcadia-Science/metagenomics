@@ -6,9 +6,9 @@ include { SOURMASH_TAXANNOTATE                      }   from '../../modules/loca
 workflow SOURMASH_PROFILING {
     take:
     sequences  // tuple val(meta), path(assemblies) OR tuple val(meta), path(reads)
-    seqtype
-    databases  // tuple val (database_meta), path(database_path)
-    // path(lineages)
+    seqtype    // val(reads) or val(assemblies)
+    databases  // tuple val(database_meta), path(database_path)
+    lineages   // tuple val(database_meta), path(lineage_path)
 
     main:
     ch_versions = Channel.empty()
@@ -48,7 +48,8 @@ workflow SOURMASH_PROFILING {
     ch_versions = ch_versions.mix(SOURMASH_GATHER.out.versions)
 
     // taxonomy against lineage CSV
-    SOURMASH_TAXANNOATE()
+    // first combine correct gather result to lineage CSV with meta database
+    // SOURMASH_TAXANNOTATE(ch_gather_result, lineages, seqtype)
 
     // sourmashconsumr module for running functions to process all files
     // calls a script that outputs an HTML document for Rmarkdown rendering???

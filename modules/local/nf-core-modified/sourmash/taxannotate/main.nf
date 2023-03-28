@@ -9,7 +9,7 @@ process SOURMASH_TAXANNOTATE {
 
     input:
     tuple val(meta), path(gather_results)
-    path(taxonomy)
+    tuple val(database_meta), path(taxonomy)
     val seqtype
 
     output:
