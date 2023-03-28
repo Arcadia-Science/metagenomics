@@ -12,7 +12,7 @@ workflow SOURMASH_DBS_CHECK {
     CHECK_SOURMASH_DBS (sourmash_dbs_csv)
         .csv
         .splitCsv ( header:true, sep:',' )
-        .map { create_fastq_channel(it) }
+        .map { create_sourmash_channel(it) }
         .set { sourmash_databases }
 
     emit:
@@ -21,7 +21,7 @@ workflow SOURMASH_DBS_CHECK {
 }
 
 // Function to get list of [ meta, [database_path,lineage_path] ]
-def create_fastq_channel(LinkedHashMap row) {
+def create_sourmash_channel(LinkedHashMap row) {
     // create meta map
     def meta = [:]
     meta.database         = row.database
