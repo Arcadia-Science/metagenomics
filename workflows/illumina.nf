@@ -49,7 +49,6 @@ include { RENAME_CONTIGS                                  } from '../modules/loc
 include { QUAST                                           } from '../modules/local/nf-core-modified/quast/main'
 include { SOURMASH_PROFILING as SOURMASH_PROFILE_READS    } from '../subworkflows/local/sourmash_profiling'
 include { SOURMASH_PROFILING as SOURMASH_PROFILE_ASSEMBS  } from '../subworkflows/local/sourmash_profiling'
-include { SOURMASH_DBS_CHECK                              } from '../subworkflows/local/sourmash_dbs_check'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -102,25 +101,18 @@ workflow ILLUMINA {
     )
     ch_versions = ch_versions.mix(ILLUMINA_MAPPING_DEPTH.out.versions)
 
-    // check sourmash databases for queuing into profiling processes
-    SOURMASH_DBS_CHECK(ch_sourmash_dbs_csv)
-    sourmash_databases = SOURMASH_DBS_CHECK.out.sourmash_databases
-    sourmash_lineages = SOURMASH_DBS_CHECK.out.sourmash_lineages
-
     // sourmash profiling subworkflow for reads
     SOURMASH_PROFILE_READS (
         ch_short_reads,
         "reads",
-        sourmash_databases,
-        sourmash_lineages
+        ch_sourmash_dbs_csv
     )
 
     // sourmash profiling subworkflow for assemblies
     SOURMASH_PROFILE_ASSEMBS (
         ch_reformatted_assemblies,
         "assembly",
-        sourmash_databases,
-        sourmash_lineages
+        ch_sourmash_dbs_csv
     )
     ch_versions = ch_versions.mix(SOURMASH_PROFILE_ASSEMBS.out.versions)
 

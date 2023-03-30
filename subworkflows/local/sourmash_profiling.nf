@@ -5,13 +5,28 @@ include { SOURMASH_TAXANNOTATE                      }   from '../../modules/loca
 
 workflow SOURMASH_PROFILING {
     take:
-    sequences  // tuple val(meta), path(assemblies) OR tuple val(meta), path(reads)
-    seqtype    // val(reads) or val(assemblies)
-    databases  // tuple val(database_meta), path(database_path)
-    lineages   // tuple val(database_meta), path(lineage_path)
+    sequences       // tuple val(meta), path(assemblies) OR tuple val(meta), path(reads)
+    seqtype         // val(reads) or val(assemblies)
+    databases_csv  // path(sourmash_dbs_csv) CSV file of database,database_path,lineage_path
 
     main:
     ch_versions = Channel.empty()
+    ch_sourmash_databases = Channel.empty()
+    ch_sourmash_lineages = Channel.empty()
+
+    // read in databases and lineages from input CSV
+    ch_sourmash_databases = Channel.fromPath(databases_csv)
+        .splitCsv(header:true,sep:',')
+        .map{row ->
+            return [row.subMap(['database']), file(row.database_path)]}
+
+    ch_sourmash_lineages = Channel.fromPath(databases_csv)
+        .splitCsv(header:true,sep:',')
+        .map{row ->
+            return [row.subMap(['database']), file(row.lineage_path)]}
+
+    ch_sourmash_databases.view()
+    ch_sourmash_lineages.view()
 
     // sketch
     SOURMASH_SKETCH(sequences, seqtype)
@@ -36,7 +51,9 @@ workflow SOURMASH_PROFILING {
     // gather against database
     // prep all combinations of input files with databases
     ch_input_gather = ch_signatures
-        .combine(databases)
+        .combine(ch_sourmash_databases)
+
+    ch_input_gather.view()
 
     SOURMASH_GATHER(ch_input_gather, seqtype,
         [], // val save_unassigned
