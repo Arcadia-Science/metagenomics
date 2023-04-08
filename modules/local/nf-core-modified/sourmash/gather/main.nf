@@ -48,7 +48,6 @@ process SOURMASH_GATHER {
         ${signature} \\
         ${database_path}
 
-    touch ${prefix}.csv
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         sourmash: \$(echo \$(sourmash --version 2>&1) | sed 's/^sourmash //' )
