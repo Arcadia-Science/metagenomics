@@ -6,7 +6,7 @@ include { SOURMASH_TAXANNOTATE                      }   from '../../modules/loca
 workflow SOURMASH_PROFILING {
     take:
     sequences       // tuple val(meta), path(assemblies) OR tuple val(meta), path(reads)
-    seqtype         // val(reads) or val(assemblies)
+    seqtype         // "reads" or "assembly"
     databases_csv  // path(sourmash_dbs_csv) CSV file of database,database_path,lineage_path
 
     main:
