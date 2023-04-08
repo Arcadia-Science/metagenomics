@@ -60,16 +60,16 @@ workflow SOURMASH_PROFILING {
         [], // val save_prefetch
         []  // val save_prefetch_csv
     )
-    ch_gather_result = SOURMASH_GATHER.out.result
+    ch_gather_result = SOURMASH_GATHER.out.result.filter { it.size() > 0} // only output if non-empty so taxannoate doesn't error out
     ch_versions = ch_versions.mix(SOURMASH_GATHER.out.versions)
 
     // taxonomy against lineage CSV
-    // combine each gather result to all databases
+    // combine per sample all lineage CSVs
     ch_input_taxannotate = ch_gather_result
         .combine(ch_sourmash_lineages)
     SOURMASH_TAXANNOTATE(ch_input_taxannotate, seqtype)
     ch_tax_result = SOURMASH_TAXANNOTATE.out.result
-
+    ch_versions = ch_versions.mix(SOURMASH_TAXANNOTATE.out.versions)
 
     // sourmashconsumr module for running functions to process all files
     // calls a script that outputs an HTML document for Rmarkdown rendering???
