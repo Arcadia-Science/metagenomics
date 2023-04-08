@@ -7,7 +7,7 @@ workflow SOURMASH_PROFILING {
     take:
     sequences       // tuple val(meta), path(assemblies) OR tuple val(meta), path(reads)
     seqtype         // "reads" or "assembly"
-    databases_csv  // path(sourmash_dbs_csv) CSV file of database,database_path,lineage_path
+    databases_csv  // path(sourmash_dbs_csv) CSV file of database_path,lineage_path
 
     main:
     ch_versions = Channel.empty()
