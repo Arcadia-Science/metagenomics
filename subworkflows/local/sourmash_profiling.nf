@@ -54,8 +54,6 @@ workflow SOURMASH_PROFILING {
     ch_input_gather = ch_signatures
         .combine(ch_sourmash_databases)
 
-    ch_input_gather.view()
-
     SOURMASH_GATHER(ch_input_gather, seqtype,
         [], // val save_unassigned
         [], // val save_matches_sig
