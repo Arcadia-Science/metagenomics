@@ -1,6 +1,7 @@
 process SOURMASH_TAXANNOTATE {
     tag "$meta.id"
     label 'process_single'
+    // added seqtype and updated sourmash version
 
     conda "bioconda::sourmash=4.6.1"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -8,8 +9,7 @@ process SOURMASH_TAXANNOTATE {
         'quay.io/biocontainers/sourmash:4.6.1--hdfd78af_0' }"
 
     input:
-    tuple val(meta), path(gather_results)
-    tuple val(database_meta), path(taxonomy)
+    tuple val(meta), path(gather_results), path(taxonomy)
     val seqtype
 
     output:

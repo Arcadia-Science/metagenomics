@@ -11,22 +11,23 @@ workflow SOURMASH_PROFILING {
 
     main:
     ch_versions = Channel.empty()
-    ch_sourmash_databases = Channel.empty()
-    ch_sourmash_lineages = Channel.empty()
 
-    // read in databases and lineages from input CSV
+    // read in databases from input CSV
+    // collects all of them together to make a list to run once per sample
     ch_sourmash_databases = Channel.fromPath(databases_csv)
-        .splitCsv(header:true,sep:',')
-        .map{row ->
-            return [row.subMap(['database']), file(row.database_path)]}
+        .splitCsv(header:true, sep:',')
+        .filter { row -> row.database_path != null }
+        .map { row -> file(row.database_path) }
+        .collect()
+        .toList()
 
+    // read in lineages from input CSV
     ch_sourmash_lineages = Channel.fromPath(databases_csv)
-        .splitCsv(header:true,sep:',')
-        .map{row ->
-            return [row.subMap(['database']), file(row.lineage_path)]}
-
-    ch_sourmash_databases.view()
-    ch_sourmash_lineages.view()
+        .splitCsv(header:true, sep:',')
+        .filter { row -> row.lineage_path != null }
+        .map { row -> file(row.lineage_path) }
+        .collect()
+        .toList()
 
     // sketch
     SOURMASH_SKETCH(sequences, seqtype)
@@ -49,7 +50,7 @@ workflow SOURMASH_PROFILING {
     ch_versions = ch_versions.mix(SOURMASH_COMPARE.out.versions)
 
     // gather against database
-    // prep all combinations of input files with databases
+    // prep all combinations of input files with combined databases
     ch_input_gather = ch_signatures
         .combine(ch_sourmash_databases)
 
@@ -65,8 +66,12 @@ workflow SOURMASH_PROFILING {
     ch_versions = ch_versions.mix(SOURMASH_GATHER.out.versions)
 
     // taxonomy against lineage CSV
-    // first combine correct gather result to lineage CSV with meta database
-    // SOURMASH_TAXANNOTATE(ch_gather_result, lineages, seqtype)
+    // combine each gather result to all databases
+    ch_input_taxannotate = ch_gather_result
+        .combine(ch_sourmash_lineages)
+    SOURMASH_TAXANNOTATE(ch_input_taxannotate, seqtype)
+    ch_tax_result = SOURMASH_TAXANNOTATE.out.result
+
 
     // sourmashconsumr module for running functions to process all files
     // calls a script that outputs an HTML document for Rmarkdown rendering???
@@ -76,5 +81,6 @@ workflow SOURMASH_PROFILING {
     ch_compare_matrix
     ch_compare_csv
     ch_gather_result
+    ch_tax_result
     versions = ch_versions
 }
