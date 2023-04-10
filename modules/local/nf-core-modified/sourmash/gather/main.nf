@@ -1,8 +1,9 @@
 process SOURMASH_GATHER {
     tag "$meta.id"
-    label 'process_low'
+    label 'process_high'
     // bumped up version
     // added seqtype
+    // process_high label for situation running all 5 databases
 
     conda "bioconda::sourmash=4.6.1"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -10,7 +11,7 @@ process SOURMASH_GATHER {
         'quay.io/biocontainers/sourmash:4.6.1--hdfd78af_0' }"
 
     input:
-    tuple val(meta), path(signature), path(database_path)
+    tuple val(meta), path(signature), path(databases_paths) // latter can take in a list of all provided databases paths and run all at once
     val seqtype
     val save_unassigned
     val save_matches_sig
@@ -46,7 +47,7 @@ process SOURMASH_GATHER {
         ${prefetch} \\
         ${prefetchcsv} \\
         ${signature} \\
-        ${database_path}
+        ${databases_paths}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

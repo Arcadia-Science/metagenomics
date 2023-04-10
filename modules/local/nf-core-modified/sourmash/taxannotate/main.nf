@@ -9,7 +9,7 @@ process SOURMASH_TAXANNOTATE {
         'quay.io/biocontainers/sourmash:4.6.1--hdfd78af_0' }"
 
     input:
-    tuple val(meta), path(gather_results), path(taxonomy)
+    tuple val(meta), path(gather_results), path(taxonomies) // latter can take paths to multiple taxonomy CSVs to run all together against a gather result CSV
     val seqtype
 
     output:
@@ -26,7 +26,7 @@ process SOURMASH_TAXANNOTATE {
         tax annotate \
         $args \\
         --gather-csv ${gather_results} \\
-        --taxonomy ${taxonomy} \\
+        --taxonomy ${taxonomies} \\
         --output-dir "."
 
     ## Compress output
