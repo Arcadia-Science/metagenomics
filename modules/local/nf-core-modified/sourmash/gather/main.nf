@@ -1,7 +1,9 @@
 process SOURMASH_GATHER {
     tag "$meta.id"
-    label 'process_low'
+    label 'process_high'
     // bumped up version
+    // added seqtype
+    // process_high label for situation running all 5 databases
 
     conda "bioconda::sourmash=4.6.1"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -9,8 +11,8 @@ process SOURMASH_GATHER {
         'quay.io/biocontainers/sourmash:4.6.1--hdfd78af_0' }"
 
     input:
-    tuple val(meta), path(signature)
-    path(database)
+    tuple val(meta), path(signature), path(databases_paths) // latter can take in a list of all provided databases paths and run all at once
+    val seqtype
     val save_unassigned
     val save_matches_sig
     val save_prefetch
@@ -30,7 +32,7 @@ process SOURMASH_GATHER {
 
     script:
     def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: "${meta.id}"
+    def prefix = task.ext.prefix ?: "${meta.id}.${seqtype}.gather"
     def unassigned  = save_unassigned   ? "--output-unassigned ${prefix}_unassigned.sig.zip" : ''
     def matches     = save_matches_sig  ? "--save-matches ${prefix}_matches.sig.zip"         : ''
     def prefetch    = save_prefetch     ? "--save-prefetch ${prefix}_prefetch.sig.zip"       : ''
@@ -39,13 +41,13 @@ process SOURMASH_GATHER {
     """
     sourmash gather \\
         $args \\
-        --output ${prefix}.csv.gz \\
+        --output ${prefix}.csv \\
         ${unassigned} \\
         ${matches} \\
         ${prefetch} \\
         ${prefetchcsv} \\
         ${signature} \\
-        ${database}
+        ${databases_paths}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

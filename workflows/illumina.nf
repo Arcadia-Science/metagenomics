@@ -16,6 +16,7 @@ for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true
 
 // Check mandatory parameters
 if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input samplesheet not specified!' }
+if (params.sourmash_dbs) { ch_sourmash_dbs_csv = file(params.sourmash_dbs) } else { exit 1, 'CSV file of sourmash databases and lineage files not provided!' }
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -85,29 +86,33 @@ workflow ILLUMINA {
     RENAME_CONTIGS (
         ch_assemblies, "metaspades"
     )
-    reformatted_assemblies = RENAME_CONTIGS.out.reformatted_assembly
+    ch_reformatted_assemblies = RENAME_CONTIGS.out.reformatted_assembly
 
     // run QUAST on reformatted assemblies for stats
     QUAST (
-        reformatted_assemblies.map{it -> it[1]}.collect() // aggregate assemblies together
+        ch_reformatted_assemblies.map{it -> it[1]}.collect() // aggregate assemblies together
     )
     ch_versions = ch_versions.mix(QUAST.out.versions)
 
     // map reads to corresponding assembly and calculate depth with local subworkflow
     ILLUMINA_MAPPING_DEPTH (
-        reformatted_assemblies,
+        ch_reformatted_assemblies,
         ch_short_reads
     )
     ch_versions = ch_versions.mix(ILLUMINA_MAPPING_DEPTH.out.versions)
 
+    // sourmash profiling subworkflow for reads
     SOURMASH_PROFILE_READS (
         ch_short_reads,
-        "reads"
+        "reads",
+        ch_sourmash_dbs_csv
     )
 
+    // sourmash profiling subworkflow for assemblies
     SOURMASH_PROFILE_ASSEMBS (
-        reformatted_assemblies,
-        "assembly"
+        ch_reformatted_assemblies,
+        "assembly",
+        ch_sourmash_dbs_csv
     )
     ch_versions = ch_versions.mix(SOURMASH_PROFILE_ASSEMBS.out.versions)
 

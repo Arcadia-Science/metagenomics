@@ -16,6 +16,7 @@ for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true
 
 // Check mandatory parameters
 if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input samplesheet not specified!' }
+if (params.sourmash_dbs) { ch_sourmash_dbs_csv = file(params.sourmash_dbs) } else { exit 1, 'Samplesheet CSV of sourmash DBs not specified!' }
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -111,14 +112,18 @@ workflow NANOPORE {
     )
     ch_versions = ch_versions.mix(MEDAKA.out.versions)
 
+    // sourmash profiling subworkflow for reads
     SOURMASH_PROFILE_READS (
         ch_reads,
-        "reads"
+        "reads",
+        ch_sourmash_dbs_csv
     )
 
+    // sourmash profiling subworkflow for assemblies
     SOURMASH_PROFILE_ASSEMBS (
         ch_reformatted_assemblies,
-        "assembly"
+        "assembly",
+        ch_sourmash_dbs_csv
     )
     ch_versions = ch_versions.mix(SOURMASH_PROFILE_ASSEMBS.out.versions)
 
