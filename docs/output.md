@@ -20,6 +20,7 @@ Read QC and adapter trimming is performed with `fastp`, and assembly performed w
 Read statistics are output with `NanoStat`. Adapter trimming is performed with `porechop_ABI`, the successor to the popular adapter trimming software `porechop`. Assembly is performed with `flye` using the `--meta` option. Reads are mapped to the assembly with `minimap2` to then polish with `medaka` and get differential coverage statistics. The intermediate files, logs, and resulting files such as the QCed reads, draft assemblies, polished assemblies, and mapping BAM files can be found within the folders with the name of each tool.
 
 ### Sourmash Output Files
+
 Sourmash is a command-line tool for computing hash sketches from DNA sequences, which can be used to compare DNA sequences against each other such as for samples similarity comparisons or obtaining taxonomic composition information by comparing against databases of publicly available sequences. In this pipeline, the sourmash subworkflow runs `sourmash sketch`, `sourmash compare`, `sourmash gather` and `sourmash taxannotate` on the sets of input samples separately for resulting QCed reads and assemblies. The outputs including individual sketches for each sample, comparison results of all sketches against each other, and gather and taxannotate results can be used to explore sample similarity and composition based on the input databases that are supplied in the CSV via the `--sourmash_dbs` parameter.
 
 ### General Outputs and MultiQC HTML Report
