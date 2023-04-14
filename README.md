@@ -8,13 +8,13 @@
 
 ## Introduction
 
-**Arcadia-Science/metagenomics** is a pipeline for profiling metagenomes obtained through Illumina and Nanopore technologies.
+**Arcadia-Science/metagenomics** is a pipeline for profiling metagenomes obtained through either Illumina or Nanopore technologies.
 
 The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It uses Docker/Singularity containers making installation trivial and results highly reproducible. The [Nextflow DSL2](https://www.nextflow.io/docs/latest/dsl2.html) implementation of this pipeline uses one container per process which makes it much easier to maintain and update software dependencies. Where possible, these processes have been submitted to and installed from [nf-core/modules](https://github.com/nf-core/modules) in order to make them available to all nf-core pipelines, and to everyone within the Nextflow community!
 
 ## Pipeline Summary
 
-This pipeline performs QC and profiling of metagenomes obtained through either Illumina or Nanopore technologies. The pipeline consists of two separate workflows for processing the Illumina and Nanopore data and producing assemblies. Downstream steps for summarizing the composition of metagenomes are mostly identical for the two technologies. You can find more information about how the pipeline operates in the [`docs`](docs/README.md).
+This pipeline performs common QC, processing, and profiling steps of metagenomes obtained through either Illumina or Nanopore technologies. The pipeline consists of two separate workflows for processing the Illumina and Nanopore data and producing assemblies. Downstream steps for summarizing the composition of metagenomes are mostly identical for the two technologies. You can find more information about how the pipeline operates in the [`docs`](docs/README.md).
 
 ## Quick Start
 
