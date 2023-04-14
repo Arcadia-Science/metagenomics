@@ -42,8 +42,10 @@ Note that some form of configuration will be needed so that Nextflow knows how t
 4. Start running your own analysis!
 
    ```bash
-   nextflow run Arcadia-Science/metagenomics --input samplesheet.csv --outdir <OUTDIR> --platform <illumina|nanopore> -profile <docker/singularity/conda/institute>
+   nextflow run Arcadia-Science/metagenomics --input samplesheet.csv --outdir <OUTDIR> --platform <illumina|nanopore> --sourmash_dbs sourmash_dbs_paths.csv -profile <docker/singularity/conda/institute>
    ```
+
+   You can find more information about how to format your input samplesheet CSV and providing the paths to pre-downloaded sourmash database files in `docs/usage.md`.
 
 ## Citations
 
