@@ -10,7 +10,11 @@
             "type": "object",
             "fa_icon": "fas fa-terminal",
             "description": "Define where the pipeline should find input data and save output data.",
-            "required": ["input", "outdir", "platform"],
+            "required": [
+                "input",
+                "outdir",
+                "platform"
+            ],
             "properties": {
                 "input": {
                     "type": "string",
@@ -30,8 +34,10 @@
                 },
                 "platform": {
                     "type": "string",
-                    "default": "illumina",
-                    "enum": ["illumina", "nanopore"],
+                    "enum": [
+                        "illumina",
+                        "nanopore"
+                    ],
                     "help_text": "Select the platform of your input reads. Options are illumina for Illumina short reads or nanopore for ONT reads",
                     "description": "Sequencing technology platform of reads, must be either illumina or nanopore. Default set to illumina."
                 },
@@ -233,6 +239,10 @@
         "config_profile_name": {
             "type": "string",
             "default": "None"
+        },
+        "sourmash_dbs": {
+            "type": "string",
+            "default": null
         }
     }
 }
