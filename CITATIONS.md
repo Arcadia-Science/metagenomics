@@ -13,7 +13,7 @@ Below are citations of tools used in the pipeline that you should cite in your w
 > Di Tommaso P, Chatzou M, Floden EW, Barja PP, Palumbo E, Notredame C. Nextflow enables reproducible computational workflows. (2017). [doi: 10.1038/nbt.3820](https://www.nature.com/articles/nbt.3820)
 
 - [MultiQC](https://pubmed.ncbi.nlm.nih.gov/27312411/)
-  > Ewels P, Magnusson M, Lundin S, Käller M. MultiQC: summarize analysis results for multiple tools and samples in a single report. (2016). [doi: 10.1093/bioinformatics/btw354.](https://academic.oup.com/bioinformatics/article/32/19/3047/2196507?login=false)
+  > Ewels P, Magnusson M, Lundin S, Käller M. MultiQC: summarize analysis results for multiple tools and samples in a single report. (2016). [doi: 10.1093/bioinformatics/btw354.](https://academic.oup.com/bioinformatics/article/32/19/3047/2196507)
 
 ## Pipeline tools
 
@@ -31,7 +31,7 @@ Below are pipeline-specific tools, categorized by tools for Illumina preprocessi
 ### Nanopore Pipeline Tools
 
 - [NanoPlot](https://academic.oup.com/bioinformatics/article/34/15/2666/4934939)
-  > NanoPack: visualizing and processing long-read sequencing data. (2018). [https://doi.org/10.1093/bioinformatics/bty149](https://academic.oup.com/bioinformatics/article/34/15/2666/4934939)
+  > De Coster W, D'Hert S, Schultz DT, Cruts M, Van Broeckhoven C. NanoPack: visualizing and processing long-read sequencing data. (2018). [https://doi.org/10.1093/bioinformatics/bty149](https://academic.oup.com/bioinformatics/article/34/15/2666/4934939)
 - [Porechop_ABI](https://www.biorxiv.org/content/10.1101/2022.07.07.499093v1)
   > Bonenfant Q, Noe L, Touzet H. Porechop_ABI: discovering unknown adapters in ONT sequencing reads for downstream trimming. (2022). [doi:10.1101/2022.07.07.499093](https://academic.oup.com/bioinformatics/article/34/15/2666/4934939)
 - [Flye](https://www.nature.com/articles/s41587-019-0072-8)

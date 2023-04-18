@@ -14,7 +14,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool
 
 ## Pipeline Summary
 
-This pipeline performs common QC, processing, and profiling steps of metagenomes obtained through either Illumina or Nanopore technologies. The pipeline consists of two separate workflows for processing the Illumina and Nanopore data and producing assemblies. **Therefore Illumina or Nanopore samples are processed separately, as this pipeline does not handle hybrid assembly or polishing with short reads.** Downstream steps for summarizing the composition of metagenomes are mostly identical for the two technologies. You can find more information about how the pipeline operates in the [`docs`](docs/README.md).
+This pipeline performs common QC, processing, and profiling steps of metagenomes obtained through either Illumina or Nanopore technologies. The pipeline consists of two separate workflows for processing the Illumina and Nanopore data and producing assemblies. **Therefore Illumina or Nanopore samples are processed separately, as this pipeline does not handle hybrid assembly or polishing with short reads.** Downstream steps for summarizing the composition of metagenomes are mostly identical for the two technologies. You can find more information about how the pipeline operates in the [`docs`](docs/usage.md).
 
 ## Quick Start
 
