@@ -103,4 +103,4 @@ This argument is required and you must input either `illumina` or `nanopore` dep
 
 #### `--sourmash_dbs`
 
-This argument is required and you must download the sourmash databases and lineage CSVs prior to running the workflow. You can find several pre-prepared sourmash databases at [https://sourmash.readthedocs.io/en/latest/databases.html](https://sourmash.readthedocs.io/en/latest/databases.html). It is highly recommended that for the purposes of this workflow you download the same kmer size for each database, and we use `k31` as a default kmer size throughout the workflow. Once you have these downloaded, prepare the CSV as shown above.
+This argument is required and you must download the sourmash databases and lineage CSVs prior to running the workflow. You can find several pre-prepared sourmash databases at [https://sourmash.readthedocs.io/en/latest/databases.html](https://sourmash.readthedocs.io/en/latest/databases.html). You must download and use the same kmer size for each database, and we use `k31` as a default kmer size throughout the workflow. Once you have these downloaded, prepare the CSV as shown above.
