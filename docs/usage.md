@@ -31,10 +31,18 @@ el,https://github.com/Arcadia-Science/test-datasets/raw/main/metagenomics/ont/el
 
 Note that even for Nanopore reads which the input is in a single fastq file, still include the third column for `fastq_2` - the pipeline for processing Nanopore reads will ignore this and process your Nanopore reads that are in a single fastq file.
 
+Additionally, you will need to provide a CSV containing the paths of sourmash databases and corresponding lineage files that you want to run against your samples. These files will need to be downloaded prior to running the workflow, and the CSV passed to the `--sourmash_dbs` parameter should look like:
+
+```
+database_path,lineage_path
+https://github.com/Arcadia-Science/test-datasets/raw/main/metagenomics/sourmash_dbs/GCF_001457635.1.db.zip,https://github.com/Arcadia-Science/test-datasets/raw/main/metagenomics/sourmash_dbs/GCF_001457635.1.taxonomy.csv
+https://github.com/Arcadia-Science/test-datasets/raw/main/metagenomics/sourmash_dbs/GCF_003697165.2.db.zip,https://github.com/Arcadia-Science/test-datasets/raw/main/metagenomics/sourmash_dbs/GCF_003697165.2.taxonomy.csv
+```
+
 ## Running the pipeline
 
 A typical command for running the pipeline looks like:
-` nextflow run Arcadia-Science/metagenomics --input <SAMPLESHEET.csv> --outdir <OUTDIR> --platform <illumina|nanopore> -profile docker`
+` nextflow run Arcadia-Science/metagenomics --input <SAMPLESHEET.csv> --outdir <OUTDIR> --platform <illumina|nanopore> --sourmash_dbs sourmash_dbs.csv -profile docker`
 
 This will launch the pipeline with the `docker` configuration profile. See below for more information about profiles. The options for `--platform` are either `illumina` or `nanopore` depending on your sequencing file input. Therefore, you cannot run both Illumina and Nanopore sequencing files in the same run - instead submit separate runs. The pipeline will create the following files and directories in your working directory:
 
@@ -92,3 +100,7 @@ Nextflow handles job submissions and supervises running jobs. The Nextflow proce
 #### `--platform`
 
 This argument is required and you must input either `illumina` or `nanopore` depending on your input sequencing files. Therefore a combination of Illumina and Nanopore sequencing files **CANNOT** be run in the same submission - instead submit two jobs differentiating between the two file types.
+
+#### `--sourmash_dbs`
+
+This argument is required and you must download the sourmash databases and lineage CSVs prior to running the workflow. You can find several pre-prepared sourmash databases at [https://sourmash.readthedocs.io/en/latest/databases.html](https://sourmash.readthedocs.io/en/latest/databases.html). You must download and use the same kmer size for each database, and we use `k31` as a default kmer size throughout the workflow. Once you have these downloaded, prepare the CSV as shown above.
