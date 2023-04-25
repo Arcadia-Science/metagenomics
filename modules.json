@@ -25,6 +25,10 @@
                         "branch": "master",
                         "git_sha": "c8e35eb2055c099720a75538d1b8adb3fb5a464c"
                     },
+                    "megan/daa2info": {
+                        "branch": "master",
+                        "git_sha": "4ba156c7aabf67045aa71b6cc5d5a8729b737f9e"
+                    },
                     "minimap2/index": {
                         "branch": "master",
                         "git_sha": "c8e35eb2055c099720a75538d1b8adb3fb5a464c"
