@@ -99,12 +99,6 @@ workflow NANOPORE {
         ch_reformatted_assemblies.map{it -> it[1]}.collect() // aggregate assemblies together
     )
 
-    // run prodigal on assemblies to predict ORFs and proteins
-    PRODIGAL (
-        ch_polished_assembly, "gbk"
-    )
-    ch_versions = ch_versions.mix(PRODIGAL.out.versions)
-
     // map reads to assembly with minimap2
     NANOPORE_MAPPING_DEPTH (
         ch_reformatted_assemblies,
@@ -119,6 +113,12 @@ workflow NANOPORE {
     )
     ch_versions = ch_versions.mix(MEDAKA.out.versions)
     ch_polished_assembly = ch_medaka.out.assembly
+
+    // run prodigal on assemblies to predict ORFs and proteins
+    PRODIGAL (
+        ch_polished_assembly, "gbk"
+    )
+    ch_versions = ch_versions.mix(PRODIGAL.out.versions)
 
     // sourmash profiling subworkflow for reads
     SOURMASH_PROFILE_READS (
