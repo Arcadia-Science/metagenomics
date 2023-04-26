@@ -85,7 +85,7 @@ workflow ILLUMINA {
 
     // rename contigs after assembly for cleaner downstream steps
     RENAME_CONTIGS (
-        ch_assemblies, "metaspades"
+        ch_assemblies, "" // empty because metaspades already in the filename
     )
     ch_reformatted_assemblies = RENAME_CONTIGS.out.reformatted_assembly
 
