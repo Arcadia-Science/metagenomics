@@ -112,7 +112,7 @@ workflow NANOPORE {
         ch_medaka
     )
     ch_versions = ch_versions.mix(MEDAKA.out.versions)
-    ch_polished_assembly = ch_medaka.out.assembly
+    ch_polished_assembly = MEDAKA.out.assembly
 
     // run prodigal on assemblies to predict ORFs and proteins
     PRODIGAL (
