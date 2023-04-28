@@ -53,6 +53,10 @@ Below are pipeline-specific tools, categorized by tools for Illumina preprocessi
   > Brown CT, Irber L. (2016). Sourmash: a library for MinHash sketching of DNA. [https://doi.org/10.21105/joss.00027](https://joss.theoj.org/papers/10.21105/joss.00027)
 - [Biopyton](https://biopython.org/)
   > Cock PJA, Antao T, Chang JT, Chapman BA, Cox CJ, Dalke A, Friedberg I, Hamelryck T, Kauff F, Wilcynzski B, de Hoon MJL. Biopython: freely available Python tools for computational molecular biology and bioinformatics. (2009). [https://doi.org/10.1093/bioinformatics/btp163](https://academic.oup.com/bioinformatics/article/25/11/1422/330687?login=false)
+- [Prodigal](https://github.com/hyattpd/Prodigal)
+  > Hyatt D, Chen GL, LoCascio PF, Land ML, Larimer FW, Hauser LJ. Prodigal: prokaryotic gene recognition and translation initiation site identification. (2010). [https://doi.org/10.1186/1471-2105-11-119](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-11-119)
+- [DIAMOND](https://github.com/bbuchfink/diamond)
+  > Buchfink B, Xie C, Huson DH. Fast and sensitive protein alignment using DIAMOND. (2014). [https://doi.org/10.1038/nmeth.3176](https://www.nature.com/articles/nmeth.3176)
 
 ## Software packaging/containerisation tools
 

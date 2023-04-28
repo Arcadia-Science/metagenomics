@@ -46,6 +46,7 @@ include { METASPADES                                      } from '../modules/loc
 include { ILLUMINA_MAPPING_DEPTH                          } from '../subworkflows/local/illumina_mapping_depth'
 include { INPUT_CHECK                                     } from '../subworkflows/local/input_check'
 include { RENAME_CONTIGS                                  } from '../modules/local/rename_contigs'
+include { PRODIGAL                                        } from '../modules/local/nf-core-modified/prodigal/main'
 include { QUAST                                           } from '../modules/local/nf-core-modified/quast/main'
 include { SOURMASH_PROFILING as SOURMASH_PROFILE_READS    } from '../subworkflows/local/sourmash_profiling'
 include { SOURMASH_PROFILING as SOURMASH_PROFILE_ASSEMBS  } from '../subworkflows/local/sourmash_profiling'
@@ -84,7 +85,7 @@ workflow ILLUMINA {
 
     // rename contigs after assembly for cleaner downstream steps
     RENAME_CONTIGS (
-        ch_assemblies, "metaspades"
+        ch_assemblies, "" // empty because metaspades already in the filename
     )
     ch_reformatted_assemblies = RENAME_CONTIGS.out.reformatted_assembly
 
@@ -93,6 +94,12 @@ workflow ILLUMINA {
         ch_reformatted_assemblies.map{it -> it[1]}.collect() // aggregate assemblies together
     )
     ch_versions = ch_versions.mix(QUAST.out.versions)
+
+    // run prodigal on assemblies to predict ORFs and proteins
+    PRODIGAL (
+        ch_reformatted_assemblies, "gbk"
+    )
+    ch_versions = ch_versions.mix(PRODIGAL.out.versions)
 
     // map reads to corresponding assembly and calculate depth with local subworkflow
     ILLUMINA_MAPPING_DEPTH (

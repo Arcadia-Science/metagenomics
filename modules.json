@@ -9,6 +9,10 @@
                         "branch": "master",
                         "git_sha": "5e34754d42cd2d5d248ca8673c0a53cdf5624905"
                     },
+                    "diamond/blastp": {
+                        "branch": "master",
+                        "git_sha": "0f8a77ff00e65eaeebc509b8156eaa983192474b"
+                    },
                     "fastp": {
                         "branch": "master",
                         "git_sha": "5e34754d42cd2d5d248ca8673c0a53cdf5624905"
@@ -16,6 +20,10 @@
                     "flye": {
                         "branch": "master",
                         "git_sha": "c8e35eb2055c099720a75538d1b8adb3fb5a464c"
+                    },
+                    "megan/daa2info": {
+                        "branch": "master",
+                        "git_sha": "4ba156c7aabf67045aa71b6cc5d5a8729b737f9e"
                     },
                     "minimap2/index": {
                         "branch": "master",

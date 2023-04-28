@@ -67,12 +67,11 @@ workflow SOURMASH_PROFILING {
     // combine per sample all lineage CSVs
     ch_input_taxannotate = ch_gather_result
         .combine(ch_sourmash_lineages)
+        
     SOURMASH_TAXANNOTATE(ch_input_taxannotate, seqtype)
     ch_tax_result = SOURMASH_TAXANNOTATE.out.result
     ch_versions = ch_versions.mix(SOURMASH_TAXANNOTATE.out.versions)
 
-    // sourmashconsumr module for running functions to process all files
-    // TODO: calls a script that outputs an HTML document for Rmarkdown rendering???
 
     emit:
     ch_signatures

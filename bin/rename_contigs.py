@@ -18,6 +18,7 @@ def parse_args(args=None):
     parser.add_argument(
         "--assembler",
         metavar="ASSEMBLER",
+        nargs="?",
         help="Assembly algorithm that produced the FASTA file for propagating in contig names",
     )
     parser.add_argument(
@@ -36,8 +37,11 @@ def rename_contigs(fasta, assembler, output):
         with gzip.open(fasta, "rt") as handle:
             for seq_record in SeqIO.parse(handle, "fasta"):
                 contig_id = contig_id + 1
-                newid = str(contig_id).zfill(5)
-                header = ">" + name + "_" + assembler + "_contig_" + str(newid) + "\n"
+                newid = str(contig_id).zfill(7)
+                if assembler is not None:
+                    header = ">" + assembler + "_" + name + "_contig_" + str(newid) + "\n"
+                else:
+                    header = ">" + name + "_contig_" + str(newid) + "\n"
                 seq = str(seq_record.seq) + "\n"
                 outfile.write(header.encode())
                 outfile.write(seq.encode())
