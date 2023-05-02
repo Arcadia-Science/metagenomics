@@ -17,6 +17,7 @@ for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true
 // Check mandatory parameters
 if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input samplesheet not specified!' }
 if (params.sourmash_dbs) { ch_sourmash_dbs_csv = file(params.sourmash_dbs) } else { exit 1, 'CSV file of sourmash databases and lineage files not provided!' }
+if (params.diamond_db) { ch_diamond_db = file(params.diamond_db) } else { exit 1, 'DIAMOND database not provided! '}
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -34,6 +35,7 @@ ch_multiqc_custom_methods_description           = params.multiqc_methods_descrip
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 include { FASTP                                  } from '../modules/nf-core/fastp/main'
+include { DIAMOND                                } from '../modules/nf-core/diamond/main'
 include { CUSTOM_DUMPSOFTWAREVERSIONS            } from '../modules/nf-core/custom/dumpsoftwareversions/main'
 include { MULTIQC                                } from '../modules/nf-core/multiqc/main'
 
@@ -100,6 +102,7 @@ workflow ILLUMINA {
         ch_reformatted_assemblies, "gbk"
     )
     ch_versions = ch_versions.mix(PRODIGAL.out.versions)
+    ch_proteins = PRODIGAL.out.amino_acid_fasta
 
     // map reads to corresponding assembly and calculate depth with local subworkflow
     ILLUMINA_MAPPING_DEPTH (
@@ -122,6 +125,14 @@ workflow ILLUMINA {
         ch_sourmash_dbs_csv
     )
     ch_versions = ch_versions.mix(SOURMASH_PROFILE_ASSEMBS.out.versions)
+
+    DIAMOND (
+        ch_proteins,
+        ch_diamond_db,
+        "txt",
+        params.diamond_columns
+    )
+    ch_verisons = ch_versions.mix(DIAMOND.out.versions)
 
     // dump software versions
     CUSTOM_DUMPSOFTWAREVERSIONS (
