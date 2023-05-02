@@ -2,10 +2,11 @@ process DIAMOND_BLASTP {
     tag "$meta.id"
     label 'process_medium'
 
-    conda "bioconda::diamond=2.0.15"
+    // bumped up version to most current - allows for corrected_bitscore output column
+    conda "bioconda::diamond=2.1.6"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/diamond:2.0.15--hb97b32f_0' :
-        'quay.io/biocontainers/diamond:2.0.15--hb97b32f_0' }"
+        'https://depot.galaxyproject.org/singularity/diamond:2.1.6--h5b5514e_0' :
+        'quay.io/biocontainers/diamond:2.1.6--h5b5514e_0' }"
 
     input:
     tuple val(meta), path(fasta)

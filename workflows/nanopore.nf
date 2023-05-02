@@ -17,6 +17,8 @@ for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true
 // Check mandatory parameters
 if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input samplesheet not specified!' }
 if (params.sourmash_dbs) { ch_sourmash_dbs_csv = file(params.sourmash_dbs) } else { exit 1, 'Samplesheet CSV of sourmash DBs not specified!' }
+if (params.diamond_db) { ch_diamond_db = file(params.diamond_db) } else { exit 1, 'DIAMOND database not provided! '}
+if (params.diamond_columns) {val_diamond_columns = (params.diamond_columns) } else { exit 1, 'DIAMOND output columns not provided'}
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -35,6 +37,7 @@ ch_multiqc_custom_methods_description           = params.multiqc_methods_descrip
 */
 include { PORECHOP_ABI                           } from '../modules/nf-core/porechop/abi/main'
 include { FLYE                                   } from '../modules/nf-core/flye/main'
+include { DIAMOND_BLASTP                         } from '../modules/nf-core/diamond/blastp/main'
 include { CUSTOM_DUMPSOFTWAREVERSIONS            } from '../modules/nf-core/custom/dumpsoftwareversions/main'
 include { MULTIQC                                } from '../modules/nf-core/multiqc/main'
 
@@ -119,6 +122,7 @@ workflow NANOPORE {
         ch_polished_assembly, "gbk"
     )
     ch_versions = ch_versions.mix(PRODIGAL.out.versions)
+    ch_proteins = PRODIGAL.out.amino_acid_fasta
 
     // sourmash profiling subworkflow for reads
     SOURMASH_PROFILE_READS (
@@ -134,6 +138,15 @@ workflow NANOPORE {
         ch_sourmash_dbs_csv
     )
     ch_versions = ch_versions.mix(SOURMASH_PROFILE_ASSEMBS.out.versions)
+
+    // run DIAMOND blastp of predicted proteins against db
+    DIAMOND_BLASTP (
+        ch_proteins,
+        ch_diamond_db,
+        "txt",
+        params.diamond_columns
+    )
+    ch_verisons = ch_versions.mix(DIAMOND_BLASTP.out.versions)
 
     // dump software versions
     CUSTOM_DUMPSOFTWAREVERSIONS (
