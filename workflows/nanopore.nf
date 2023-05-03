@@ -70,52 +70,55 @@ workflow NANOPORE {
         ch_input
     )
     ch_versions = ch_versions.mix(INPUT_CHECK.out.versions)
+    ch_reads = INPUT_CHECK.out.reads
 
     // stats on reads with nanoplot
     NANOPLOT (
-        INPUT_CHECK.out.reads
+        ch_reads
     )
     ch_versions = ch_versions.mix(NANOPLOT.out.versions)
 
     // adapter removal with PORECHOP_ABI
     PORECHOP_ABI (
-        INPUT_CHECK.out.reads
+        ch_reads
     )
-    ch_reads = PORECHOP_ABI.out.reads
+    ch_qced_reads = PORECHOP_ABI.out.reads
     ch_versions = ch_versions.mix(PORECHOP_ABI.out.versions)
 
     // assembly with flye
     FLYE (
-        ch_reads,
+        ch_qced_reads,
         "--nano-hq"
     )
     ch_versions = ch_versions.mix(FLYE.out.versions)
+    ch_draft_assembly = FLYE.out.fasta
 
     // rename contigs after assembly for cleaner downstream steps
     RENAME_CONTIGS (
-        FLYE.out.fasta, "metaflye"
+        ch_draft_assembly, "metaflye"
     )
     ch_reformatted_assemblies = RENAME_CONTIGS.out.reformatted_assembly
 
-    // assembly QC with QUAST
-    QUAST (
-        ch_reformatted_assemblies.map{it -> it[1]}.collect() // aggregate assemblies together
-    )
-
-    // map reads to assembly with minimap2
-    NANOPORE_MAPPING_DEPTH (
-        ch_reformatted_assemblies,
-        ch_reads
-    )
-    ch_versions = ch_versions.mix(NANOPORE_MAPPING_DEPTH.out.versions)
-
-    // polishing with racon
+    // polishing with medaka
     ch_medaka = ch_reads.join(ch_reformatted_assemblies)
     MEDAKA (
         ch_medaka
     )
     ch_versions = ch_versions.mix(MEDAKA.out.versions)
     ch_polished_assembly = MEDAKA.out.assembly
+
+    // assembly QC with QUAST
+    QUAST (
+        ch_polished_assembly.map{it -> it[1]}.collect() // aggregate assemblies together
+    )
+
+    // map reads to assembly with minimap2
+    NANOPORE_MAPPING_DEPTH (
+        ch_polished_assembly,
+        ch_qced_reads
+    )
+    ch_versions = ch_versions.mix(NANOPORE_MAPPING_DEPTH.out.versions)
+
 
     // run prodigal on assemblies to predict ORFs and proteins
     PRODIGAL (
@@ -126,7 +129,7 @@ workflow NANOPORE {
 
     // sourmash profiling subworkflow for reads
     SOURMASH_PROFILE_READS (
-        ch_reads,
+        ch_qced_reads,
         "reads",
         ch_sourmash_dbs_csv
     )
