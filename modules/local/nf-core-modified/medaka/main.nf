@@ -12,8 +12,8 @@ process MEDAKA {
     tuple val(meta), path(reads), path(assembly)
 
     output:
-    tuple val(meta), path("*.fa.gz"), emit: assembly
-    path "versions.yml"             , emit: versions
+    tuple val(meta), path("*.fasta.gz") , emit: assembly
+    path "versions.yml"                 , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
