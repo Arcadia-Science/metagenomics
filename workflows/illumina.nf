@@ -18,7 +18,7 @@ for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true
 if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input samplesheet not specified!' }
 if (params.sourmash_dbs) { ch_sourmash_dbs_csv = file(params.sourmash_dbs) } else { exit 1, 'CSV file of sourmash databases and lineage files not provided!' }
 if (params.diamond_db) { ch_diamond_db = file(params.diamond_db) } else { exit 1, 'DIAMOND database not provided! '}
-if (params.diamond_columns) {val_diamond_columns = (params.diamond_columns) } else { exit 1, 'DIAMOND output columns not provided'}
+if (params.diamond_columns) {ch_diamond_columns = (params.diamond_columns) } else { exit 1, 'DIAMOND output columns not provided'}
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -132,7 +132,7 @@ workflow ILLUMINA {
         ch_proteins,
         ch_diamond_db,
         "txt",
-        val_diamond_columns
+        ch_diamond_columns
     )
     ch_verisons = ch_versions.mix(DIAMOND_BLASTP.out.versions)
 
