@@ -10,7 +10,14 @@
             "type": "object",
             "fa_icon": "fas fa-terminal",
             "description": "Define where the pipeline should find input data and save output data.",
-            "required": ["input", "outdir", "platform"],
+            "required": [
+                "input",
+                "outdir",
+                "platform",
+                "sourmash_dbs",
+                "diamond_db",
+                "diamond_columns"
+            ],
             "properties": {
                 "input": {
                     "type": "string",
@@ -46,6 +53,17 @@
                     "default": "None",
                     "description": "Path to CSV file listing the locations of pre-downloaded sourmash databases and lineage files.",
                     "help_text": "Path to CSV file containing the locations of sourmash databases and corresponding lineage files. The CSV should have the column names \"database_path\" and \"lineage_path\" where all the databases are of the same kmer size (by default the workflow runs with kmer size 31)."
+                },
+                "diamond_db": {
+                    "type": "string",
+                    "default": "None",
+                    "help_text": "Path to DIAMOND database to compare proteins against. You must make a DIAMOND database prior to using the workflow or use a publicly available one, this workflow does not include the step for making the database."
+                },
+                "diamond_columns": {
+                    "type": "string",
+                    "default": "qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore",
+                    "help_text": "Column names to include in BLAST outfmt 6 tabular output file. Column names should be provided with spaces in between them such as 'qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore corrected_bitscore qlen slen'",
+                    "description": "Columns to include for DIAMOND tab-delimited output"
                 },
                 "multiqc_title": {
                     "type": "string",

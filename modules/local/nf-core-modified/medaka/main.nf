@@ -12,8 +12,8 @@ process MEDAKA {
     tuple val(meta), path(reads), path(assembly)
 
     output:
-    tuple val(meta), path("*.fa.gz"), emit: assembly
-    path "versions.yml"             , emit: versions
+    tuple val(meta), path("*.fasta.gz") , emit: assembly
+    path "versions.yml"                 , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -31,9 +31,9 @@ process MEDAKA {
         -d ${prefix}_unzipped_assembly.fa \\
         -o polishing
 
-    mv polishing/consensus.fasta ${prefix}_polished.fa
+    mv polishing/consensus.fasta ${prefix}_polished.fasta
 
-    gzip -n ${prefix}_polished.fa
+    gzip -n ${prefix}_polished.fasta
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
