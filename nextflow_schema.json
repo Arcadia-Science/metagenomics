@@ -37,10 +37,7 @@
                 },
                 "platform": {
                     "type": "string",
-                    "enum": [
-                        "illumina",
-                        "nanopore"
-                    ],
+                    "enum": ["illumina", "nanopore"],
                     "help_text": "Select the platform of your input reads. Options are illumina for Illumina short reads or nanopore for ONT reads",
                     "description": "Sequencing technology platform of reads, must be either illumina or nanopore. Default set to illumina."
                 },
