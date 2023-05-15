@@ -39,6 +39,14 @@ https://github.com/Arcadia-Science/test-datasets/raw/main/metagenomics/sourmash_
 https://github.com/Arcadia-Science/test-datasets/raw/main/metagenomics/sourmash_dbs/GCF_003697165.2.db.zip,https://github.com/Arcadia-Science/test-datasets/raw/main/metagenomics/sourmash_dbs/GCF_003697165.2.taxonomy.csv
 ```
 
+Finally, you will need to provide the path to an already prepared DIAMOND database of your choosing. For example, we prepared a DIAMOND database of the Uniprot uniref90 proteins by running:
+
+```
+diamond makedb --in uniref90.fasta.gz --taxonmap prot.accession2taxid.FULL --taxonnodes taxdmp/nodes.dmp --taxonnames taxdmp/names.dmp -d 2023-04-26-uniref90.dmnd
+```
+
+This uses taxonomy information from NCBI that you can output in DIAMOND results. You can create a DIAMOND database from any set of input proteins with `makedb` and then specify the output columns that are appropriate. By default the `qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore` DIAMOND columns are output with any provided input DIAMOND database. With the above Uniprot uniref90 database that has taxonomy information as well, we use the columns `qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore qlen slen staxids sscinames stitle`. You can check out the [DIAMOND documentation](https://github.com/bbuchfink/diamond/wiki) for more information on preparing databases and column output options.
+
 ## Running the pipeline
 
 A typical command for running the pipeline looks like:
@@ -104,3 +112,11 @@ This argument is required and you must input either `illumina` or `nanopore` dep
 #### `--sourmash_dbs`
 
 This argument is required and you must download the sourmash databases and lineage CSVs prior to running the workflow. You can find several pre-prepared sourmash databases at [https://sourmash.readthedocs.io/en/latest/databases.html](https://sourmash.readthedocs.io/en/latest/databases.html). You must download and use the same kmer size for each database, and we use `k31` as a default kmer size throughout the workflow. Once you have these downloaded, prepare the CSV as shown above.
+
+#### `--diamond_db`
+
+This argument is required and you must download and/or prepare a DIAMOND database prior to running the workflow. This database must be of proteins as the workflow runs `diamond blastp` against all predicted proteins from generated assemblies.
+
+#### `--diamond_columns`
+
+By default the workflow directs DIAMOND to output the `diamond blastp` results with columns `qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore` however you can modify this with additional or fewer column options that DIAMOND allows.
