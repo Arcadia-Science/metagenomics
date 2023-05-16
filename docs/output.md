@@ -29,6 +29,6 @@ The workflow runs `diamond blastp` for all predicted proteins from generated ass
 
 ### General Outputs and MultiQC HTML Report
 
-Assemblies are QCed with `QUAST` for general statistics. Mapping statistics are calculated with `samtools stat`. Depth of reads mapping back to the resulting assembly is calculated with `jgisummarizebamcontigs` from the `metabat2` software. Depth results of the reads mapped back to the corresponding assembly can be found in a TSV file in `metabat2/jgisummarizebamcontigs`.
+Assemblies are QCed with `QUAST` for general statistics. Mapping statistics are calculated with `samtools stats`. Depth of reads mapping back to the resulting assembly is calculated with `jgisummarizebamcontigs` from the `metabat2` software. Depth results of the reads mapped back to the corresponding assembly can be found in a TSV file in `metabat2/jgisummarizebamcontigs`.
 
 Separate HTML reports are generated depending on if you run the workflow with `--platform illumina` or `--platform nanopore`, as the read QC tools used to summarize read quality are different, and therefore the report modules will be different as well. However the overall structure of the reports are similar - showing the reports of read QC, assembly QC stats, mapping statistics, and versions of software used in the pipeline run.
