@@ -41,7 +41,7 @@ Note that some form of configuration will be needed so that Nextflow knows how t
 
 4. Start running your own analysis!
 
-Prior to running the workflow on your samples, you will need to prepare and download databases for `sourmash` and `DIAMOND`. There are a number of [already prepared `sourmash` databases](https://sourmash.readthedocs.io/en/latest/databases.html) available, and you can checkout the [`DIAMOND` documentation](https://github.com/bbuchfink/diamond/wiki) for creating a database compatible with `diamond blastp` used in the workflow.
+Prior to running the workflow on your samples, you will need to prepare and download databases for `sourmash` and `DIAMOND`. There are a number of [already prepared `sourmash` databases](https://sourmash.readthedocs.io/en/latest/databases.html) available, and you can checkout the [`DIAMOND` documentation](https://github.com/bbuchfink/diamond/wiki) for creating a database compatible with `diamond blastp` used in the workflow. See the [usage documentation](docs/usage.md) for more information on how to prepare these databases.
 
 ```bash
 nextflow run Arcadia-Science/metagenomics --input samplesheet.csv --outdir <OUTDIR> --platform <illumina|nanopore> --sourmash_dbs sourmash_dbs_paths.csv --diamond_db prepared_diamond_db.dmnd -profile <docker/singularity/conda/institute>

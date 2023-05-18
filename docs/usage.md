@@ -6,6 +6,8 @@ This page provides documentation on how to use the Arcadia-Science/metagenomics 
 
 This pipeline processes metagenomic reads in FASTQ format from either Illumina or Nanopore technologies. **Important note**: This pipeline separately processes Illumina or Nanopore metagenomes and does not perform hybrid assembly, polishing of Nanopore assemblies with Illumina reads, or scaffolding with Nanopore reads.
 
+### Input samplesheet
+
 For Nanopore reads, the pipeline takes as direct input a single fastq file and does not perform demultiplexing or basecalling, so it expects that those steps should be done prior to feeding into the pipeline and aggregating into a single fastq file.
 
 The workflow takes a CSV samplesheet listing the sample names and paths to the fastq files as direct input. It does not take the path to the directory of the fastq files, you must list them in a samplesheet. The CSV must contain the columns:
@@ -31,6 +33,8 @@ el,https://github.com/Arcadia-Science/test-datasets/raw/main/metagenomics/ont/el
 
 Note that even for Nanopore reads which the input is in a single fastq file, still include the third column for `fastq_2` - the pipeline for processing Nanopore reads will ignore this and process your Nanopore reads that are in a single fastq file.
 
+### Sourmash Databases
+
 Additionally, you will need to provide a CSV containing the paths of sourmash databases and corresponding lineage files that you want to run against your samples. These files will need to be downloaded prior to running the workflow, and the CSV passed to the `--sourmash_dbs` parameter should look like:
 
 ```
@@ -39,13 +43,32 @@ https://github.com/Arcadia-Science/test-datasets/raw/main/metagenomics/sourmash_
 https://github.com/Arcadia-Science/test-datasets/raw/main/metagenomics/sourmash_dbs/GCF_003697165.2.db.zip,https://github.com/Arcadia-Science/test-datasets/raw/main/metagenomics/sourmash_dbs/GCF_003697165.2.taxonomy.csv
 ```
 
-Finally, you will need to provide the path to an already prepared DIAMOND database of your choosing. For example, we prepared a DIAMOND database of the Uniprot uniref90 proteins by running:
+### DIAMOND database
+
+Finally, you will need to provide the path to an already prepared DIAMOND database of your choosing. For example, we prepared a DIAMOND database of the Uniprot uniref90 along with taxonomy information.
+
+We first downloaded and prepared the Uniref90 proteins and necessary taxonomy files from NCBI with:
+
+```
+# uniref90 fasta
+wget https://ftp.uniprot.org/pub/databases/uniprot/uniref/uniref90/uniref90.fasta.gz
+
+# taxonomy files
+wget https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdmp.zip
+wget https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/accession2taxid/prot.accession2taxid.FULL.gz
+
+# unzip files
+gunzip taxdmp.zip
+tar -xzvf prot.accession2taxid.FULL.gz
+```
+
+And the DIAMOND database prepared with:
 
 ```
 diamond makedb --in uniref90.fasta.gz --taxonmap prot.accession2taxid.FULL --taxonnodes taxdmp/nodes.dmp --taxonnames taxdmp/names.dmp -d 2023-04-26-uniref90.dmnd
 ```
 
-This uses taxonomy information from NCBI that you can output in DIAMOND results. You can create a DIAMOND database from any set of input proteins with `makedb` and then specify the output columns that are appropriate. By default the `qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore` DIAMOND columns are output with any provided input DIAMOND database. With the above Uniprot uniref90 database that has taxonomy information as well, we use the columns `qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore qlen slen staxids sscinames stitle`. You can check out the [DIAMOND documentation](https://github.com/bbuchfink/diamond/wiki) for more information on preparing databases and column output options.
+You can create a DIAMOND database from any set of input proteins with `makedb` and then specify the output columns that are appropriate. By default the `qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore` DIAMOND columns are output with any provided input DIAMOND database. With the above Uniprot uniref90 database that has taxonomy information as well, we use the columns `qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore qlen slen staxids sscinames stitle`. You can check out the [DIAMOND documentation](https://github.com/bbuchfink/diamond/wiki) for more information on preparing databases and column output options.
 
 ## Running the pipeline
 
