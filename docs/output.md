@@ -23,8 +23,12 @@ Read statistics are output with `NanoStat`. Adapter trimming is performed with `
 
 Sourmash is a command-line tool for computing hash sketches from sequencing data (DNA, RNA, protein), which can be used to compare DNA sequences against each other such as for samples similarity comparisons or obtaining taxonomic composition information by comparing against databases of publicly available sequences. In this pipeline, the sourmash subworkflow runs `sourmash sketch`, `sourmash compare`, `sourmash gather` and `sourmash tax annotate` on the sets of input samples separately for resulting QCed reads and assemblies. The outputs including individual sketches for each sample, comparison results of all sketches against each other, and gather and tax annotate results can be used to explore sample similarity and composition based on the input databases that are supplied in the CSV via the `--sourmash_dbs` parameter.
 
+### DIAMOND Output
+
+The workflow runs `diamond blastp` for all predicted proteins from generated assemblies against a provided DIAMOND database. The workflow will then output a TSV (`outfmt 6`) file with the columns either used by default or specified by the user.
+
 ### General Outputs and MultiQC HTML Report
 
-Assemblies are QCed with `QUAST` for general statistics. Depth of reads mapping back to the resulting assembly is calculated with `jgisummarizebamcontigs` from the `metabat2` software. Depth results of the reads mapped back to the corresponding assembly can be found in a TSV file in `metabat2/jgisummarizebamcontigs`.
+Assemblies are QCed with `QUAST` for general statistics. Mapping statistics are calculated with `samtools stats`. Depth of reads mapping back to the resulting assembly is calculated with `jgisummarizebamcontigs` from the `metabat2` software. Depth results of the reads mapped back to the corresponding assembly can be found in a TSV file in `metabat2/jgisummarizebamcontigs`.
 
 Separate HTML reports are generated depending on if you run the workflow with `--platform illumina` or `--platform nanopore`, as the read QC tools used to summarize read quality are different, and therefore the report modules will be different as well. However the overall structure of the reports are similar - showing the reports of read QC, assembly QC stats, mapping statistics, and versions of software used in the pipeline run.
