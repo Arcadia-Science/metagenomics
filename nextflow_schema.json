@@ -1,6 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema",
-    "$id": "https://raw.githubusercontent.com/Arcadia-Science/metagenomics/master/nextflow_schema.json",
+    "$id": "https://raw.githubusercontent.com/Arcadia-Science/metagenomics/main/nextflow_schema.json",
     "title": "Arcadia-Science/metagenomics pipeline parameters",
     "description": "A workflow for QC, evaluation, and profiling metagenomic samples from short- and long-read technologies",
     "type": "object",
@@ -235,7 +235,7 @@
         },
         "custom_config_version": {
             "type": "string",
-            "default": "master"
+            "default": "main"
         },
         "custom_config_base": {
             "type": "string",
